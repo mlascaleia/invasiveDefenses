@@ -3,4 +3,6 @@
 .RData
 .Ruserdata
 *.png
-
+*.xlsx
+*.pper
+*.DS_Store
