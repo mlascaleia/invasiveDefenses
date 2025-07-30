@@ -110,11 +110,7 @@ makeMap <- function(xrange, yrange, tittl){
           axis.title = element_blank(),
           legend.position = "none",
           title = element_text(family = "serif", size = 24, face = "bold"),
-          panel.grid = element_blank()) +
-    annotation_scale(location = "br",
-                     width_hint = 0.25,
-                     unit_category = "imperial")
-  
+          panel.grid = element_blank())
   return(main)
 }
 
@@ -132,15 +128,15 @@ group_colors <- c(
   "Simaroubaceae" = "blue"
 )
 
-for(i in 1:nrow(grid_sf)){
-  bbi <- st_bbox(grid_sf[i,])
-  makeMap(as.numeric(unlist(bbi[c(1,3)])) + c(-buffer * xit, buffer * xit),
-          as.numeric(unlist(bbi[c(2,4)])) + c(-buffer * yit, buffer * yit),
-          i)
-
-  ggsave(paste0(i, "Map.png"), dpi = 1200,
-         width = 11, height = 8.5, unit = "in")
-}
+# for(i in 1:nrow(grid_sf)){
+#   bbi <- st_bbox(grid_sf[i,])
+#   makeMap(as.numeric(unlist(bbi[c(1,3)])) + c(-buffer * xit, buffer * xit),
+#           as.numeric(unlist(bbi[c(2,4)])) + c(-buffer * yit, buffer * yit),
+#           i)
+# 
+#   ggsave(paste0(i, "Map.png"), dpi = 1200,
+#          width = 13.13, height = 8.5, unit = "in")
+# }
 
 ggplot() +
   geom_sf(data = paths, alpha = 0.75) +
@@ -156,12 +152,12 @@ ggplot() +
   scale_color_manual(values = group_colors, name = "Family") +
   theme(axis.text = element_blank(),
         axis.title = element_blank(),
-        # legend.position = "none",
+        legend.position = "none",
         panel.grid = element_blank(),
         text = element_text(size = 18))
 
-# ggsave("cover.png", dpi = 1200,
-#        width = 8.5, height = 11, unit = "in")
+ggsave("cover.png", dpi = 1200,
+       width = 13.13, height = 11, unit = "in")
 
 
 

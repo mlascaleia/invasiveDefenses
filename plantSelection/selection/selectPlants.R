@@ -36,8 +36,19 @@ query.arbmap <- function(url){
 }
 
 # load data
-
-plantAll.sf <- query.arbmap("https://map.arboretum.harvard.edu/arcgis/rest/services/CollectionExplorer/MapServer/34/query?where=IS_DEAD%3D0&outFields=ACC_NUM_AND_QUAL,FAMILY,GENUS,SPECIES,INFRASPECIFIC_RANK,INFRASPECIFIC_EPITHET,CULTIVAR,LATITUDE,LONGITUDE&returnGeometry=true&f=json")
+plantAll.sf <- lapply(seq(0, 16000, by = 2000), function(i) {
+  url <- paste0(
+    "https://gis.arboretum.harvard.edu/arcgis/rest/services/Maps/Explorer/MapServer/34/query?",
+    "where=IS_DEAD=0",
+    "&outFields=ACC_NUM_AND_QUAL,FAMILY,GENUS,SPECIES,INFRASPECIFIC_RANK,INFRASPECIFIC_EPITHET,CULTIVAR,LATITUDE,LONGITUDE",
+    "&returnGeometry=true&f=json",
+    "&resultOffset=", i,
+    "&resultRecordCount=2000"
+  )
+  query.arbmap(url)
+})
+plantAll.sf <- bind_rows(plantAll.sf)
+# plantAll.sf <- query.arbmap("https://gis.arboretum.harvard.edu/arcgis/rest/services/Maps/Explorer/MapServer/34/query?where=IS_DEAD=0&outFields=ACC_NUM_AND_QUAL,FAMILY,GENUS,SPECIES,INFRASPECIFIC_RANK,INFRASPECIFIC_EPITHET,CULTIVAR,LATITUDE,LONGITUDE&returnGeometry=true&f=json&resultOffset=",2000, "&resultRecordCount=2000")
 plantWant <- read.csv("plantSelection/selection/cutDownList.csv")
 
 # refine plant data
@@ -171,6 +182,48 @@ grid_sf <- st_sf(
   crs = 4326  # You can change this to match your map's CRS
 )
 
+
+# make adjustments for June changes
+
+# manual add
+
+adders <- c("806-84*A", "22144*G", "109-79*A", "392-92*A")
+
+samplePlants <- targetable %>%
+  filter(ACC_NUM_AND_QUAL %in% adders) %>%
+  select(id = ACC_NUM_AND_QUAL, Family, Genus, Species, Binomial, colorgroup, geometry) %>%
+  st_as_sf() %>%
+  bind_rows(samplePlants) %>%
+  arrange(Family, Genus, Species)
+
+# wild additions
+
+wildPlants <- data.frame(id = c("2025-1*A", "2025-2*A", "2025-3*A", "2025-4*A", "2025-5*A"),
+                         Family = c("Adoxaceae", "Simaroubaceae", "Celastraceae", "Rhamnaceae", "Rhamnaceae"),
+                         Genus = c("Viburnum", "Ailanthus", "Celastrus", "Rhamnus", "Frangula"),
+                         Species = c("dentatum", "altissima", "orbiculatus", "cathartica", "alnus"))
+
+samplePlants <- wildPlants %>%
+  mutate(Binomial = paste(Genus, Species),
+         colorgroup = Family,
+         geometry = samplePlants$geometry[samplePlants$id == "164-2019*F"]) %>%
+  st_as_sf() %>%
+  bind_rows(samplePlants)
+
+
+# removals
+
+samplePlants <- samplePlants[!samplePlants$id %in% c(
+  "164-2019*F", # got a wild viburnum dentatum, don't need this one
+  "720-86*A", # got a wild celastrus orbiculatus, don't need this one
+  "350-2006*MASS", # hybridized hybrid honeysuckle, don't want this one
+  "904-87*A", # removed lonicera maackii (replaced)
+  "359-2001*A", # dead lonicera similis (irreplaceable)
+  "206-96*C", # removed viburnum lantana (irreplaceable)
+  # plants changed to other letters
+  "22144*E", "109-79*B", "392-92*B"
+),]
+
 # now put the grid number in with the plants on the sheet
 
 hasPlant <- st_intersects(grid_sf, samplePlants) %>%
@@ -198,14 +251,26 @@ plantSheet <- eachGrid %>%
   as.data.frame() %>%
   select(gridNum, id, Binomial, Family)
 
+pla <- read.csv("plantSelection/selection/plantSheet.csv")
+
+pla$leadNumber <- as.integer(str_extract(pla$id, "^[[:digit:]]*"))
+
+pp <-  rep(paste(rep(LETTERS[1:8], 11), rep(1:11, each = 8), sep = ""), 2)[1:nrow(pla)]
+
+pla %>%
+  arrange(leadNumber) %>%
+  mutate(platePosition = pp) %>%
+  select(id, leadNumber, platePosition) %>%
+  write.csv("dataSheets/plantOrder.csv", row.names = F)
+
 write.csv(plantSheet, "plantSelection/selection/plantSheet.csv", row.names = F)
 
-plantSheet[rep(1:nrow(plantSheet), each = 5), ] %>%
-  mutate(leafNum = rep(1:5, nrow(plantSheet))) %>%
-  write.csv("plantSelection/selection/plantSheetLeaves.csv", row.names = F)
-
+# plantSheet[rep(1:nrow(plantSheet), each = 5), ] %>%
+#   mutate(leafNum = rep(1:5, nrow(plantSheet))) %>%
+#   write.csv("plantSelection/selection/plantSheetLeaves.csv", row.names = F)
+# 
 save(grid_sf, plantAll.sf, samplePlants,
-     xit, yit, 
+     xit, yit,
      file = "plantSelection/selection/selectionObjects.rdata")
 
 
