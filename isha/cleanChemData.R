@@ -266,5 +266,5 @@ dataframe_final <- dataframe %>%
   pivot_wider(id_cols = sampleID, names_from = chemical, values_from = absorbance) %>%
   full_join(master_final)
 
-
+write.csv(dataframe_final, "isha/Harvard Master.csv", row.names = FALSE)
 
