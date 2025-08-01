@@ -1,39 +1,71 @@
+# the purpose of this script is to create box plots of all the data
+# and save them as png's in the folder "Plots"
+
+# clear environment
+rm(list = ls())
+
+
+#load packages
+library(tidyverse)
 library(ggplot2)
 library(ggthemes)
 
-master1<-read.csv("olivia/Harvard Master2.csv")
-colnames(master1)
 
-master1$treatment <- stringr::str_extract(master1$Leaf.Number, "^..")
 
-ggplot(data = master1, mapping = aes(x = treatment, y = Flavonoids )) +
-  geom_boxplot(aes(fill = treatment))+
-  geom_point(aes(color = treatment))+
-  scale_fill_manual(values = c ("azure4","blueviolet","black","grey"),
-                    (name="legendtitle"),
-                    label=c("AA Absent","AA Present","LP Absent", "LP Present"))+
-  scale_color_manual(values = c ("azure4","blueviolet","black","grey"),
-  (name="legendtitle"),
-  label=c("AA Absent","AA Present","LP Absent", "LP Present"))+
- 
-   scale_x_discrete(label=c("AA Absent","AA Present","LP Absent", "LP Present"),name = "treatments")+
-  ylab("Flavonoids")+
-  ggtitle("Flavonoid Concentration")+
+# Define your plotting function
+create_boxplot <- function(data, y_var, y_label, file_suffix) {
+  ggplot(data = data, mapping = aes(x = treatment, y = {{ y_var }})) +
+    geom_boxplot(aes(fill = treatment)) +
+    geom_point() +
+    scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"), 
+                      name = "Treatments") +
+    scale_x_discrete(label=c("AA Absent","AA Present","LP Absent", "LP Present"))+
+    xlab("Treatments") +
+    ylab(y_label) +
+    theme_tufte() +
+    theme(legend.position = "none",
+          plot.title = element_text(hjust = 0.5))
   
-  theme_tufte()+
+  # Save with dynamic filename
+  ggsave(paste0("olivia/finalplots/", file_suffix, ".png"))
+}
+
+
+# Function to process all specified columns
+process_columns <- function(data, columns_to_plot)
   
-  theme(legend.position="none",
-        panel.background =element_rect(fill="orange"),
-        plot.title = element_text(hjust = 0.5))
+  # Loop through each column specification
+  for (col_spec in columns_to_plot) {
+    col_name <- col_spec$column
+    y_label <- col_spec$label
+    file_suffix <- col_spec$file_suffix
+    
+    # Create the plot
+    create_boxplot(data = data, 
+                   y_var = !!sym(col_name), 
+                   y_label = y_label, 
+                   file_suffix = file_suffix)
+  }
+
+#whole plant traits
+all_data <- read_csv("olivia/Harvard Master2.csv")
+all_data$treatment <- stringr::str_extract(all_data$Leaf.Number, "^..")
+
+# Define which columns to plot and their labels
+columns_to_plot <- list(
+  list(column = "Flavonoids", label = "Flavonoids", file_suffix = "Flavonoids"),
+  list(column = "Phenolics", label = "Phenolics", file_suffix = "Phenolics"),
+  list(column = "Saponins", label = "Saponins", file_suffix = "Saponins"),
+  list(column = "Terpenoids", label = "Terpenoids", file_suffix = "Terpenoids"),
+  list(column = "Tannins", label = "Tannins", file_suffix = "Tannins")
+  # Add more columns as needed
+)
+
+# Run the plotting process
+process_columns(all_data, columns_to_plot)
 
 
 
 
-                
 
 
-
-  
-
-  
-  
