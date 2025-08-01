@@ -33,7 +33,6 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   geom_line(aes(color = treatment), linewidth = 2) +
   geom_line(data = df, aes(y = damage, group = id, color = treatment),
             linewidth = 0.5, alpha = 0.5) +
-  ggthemes::theme_tufte() +
   xlab("Time (Hours)")+
   ylab("Leaf Damage (%)")+
   scale_x_continuous(
@@ -49,9 +48,27 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))
   
 
-ggsave("olivia/.png") #rename and save image
+ggsave("olivia/.totalLeafDamage.png") #rename and save image
 
 
+ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
+  geom_ribbon(aes(ymin = semin, ymax = semax, fill = treatment),
+              alpha = .2) +
+  geom_line(aes(color = treatment), linewidth = 2) +
+  xlab("Time (Hours)")+
+  ylab("Leaf Damage (%)")+
+  scale_x_continuous(
+    name = "Time",
+    breaks = seq(0, 96, by = 24),
+    limits = c(0, 96),
+    labels = scales::comma
+  ) +
+  theme_tufte() +
+  scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))+
+  scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))
+
+
+ggsave("olivia/meanDamage.png")
 
 
 
