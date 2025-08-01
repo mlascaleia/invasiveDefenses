@@ -40,6 +40,8 @@ detailed_combined <- do.call(rbind, Map(cbind,
                                         Variable = names(detailed_results),
                                         detailed_results))
 
+
+
 # Save detailed results
 write.csv(detailed_combined, "isha/ANOVA/whole_plant_anova_results.csv", row.names = FALSE)
 
@@ -82,7 +84,5 @@ detailed_results <- lapply(names(anova_results_leaf), function(name) {
 write.csv(detailed_results, "isha/ANOVA/leaf_anova_results.csv", row.names = FALSE)
 
 leaf_anova <- read.csv("isha/ANOVA/leaf_anova_results.csv")
-
-
 
 
