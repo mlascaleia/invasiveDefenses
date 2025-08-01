@@ -14,16 +14,16 @@ library(purrr)
 library(stringr)
 
 # read in data
-master <- read.csv("isha/Harvard Master.csv") %>%
+master <- read.csv("olivia/Scans.csv") %>%
   select(-Flavonoids, -Phenolics, -Saponins, -Terpenoids, -Tannins)
 
-master$sampleID <- gsub("\\*", "x", master$sampleID)
-
 # create vector of file names
-csv.names <- list.files(path = "isha/chemData/", recursive = T, full.names = T)
+csv.names <- list.files(path = "olivia/chemData/", recursive = T, full.names = T)
 
 # create a list of all csvs
 csvs <- lapply(csv.names, read.csv)
+#so you created a value that is basically the whole list of csv files from every chemical analysis? 
+#I'm a little confused how this is different from the previous step
 
 # name them all their file name
 names(csvs) <- csv.names
@@ -44,10 +44,18 @@ theExtractor <- function(filename, csvList = csvs){
 
 theExtractor(csv.names[1])
 
+#ok so basically this is taking each csv file and first determining which assay it is by its filename.
+#then for whichever assay it is, it is assigned a certain wavelength. it then finds the value and then returns the data
+
+# for(i in 1:length(csv.names)){
+#   theExtractor(names(csvs)[i])
+# }
+
+
 values <- lapply(names(csvs), theExtractor)
 names(values) <- str_extract(names(csvs), "(?<=_).*(?=\\.)")
-values.df <- bind_rows(values, .id = "sampleID") %>%
-  pivot_wider(id_cols = sampleID, names_from = wavelength, values_from = absorbance) %>% #determining how to organize and pull info
+values.df <- bind_rows(values, .id = "Leaf.Number") %>%
+  pivot_wider(id_cols = Leaf.Number, names_from = wavelength, values_from = absorbance) %>% #determining how to organize and pull info
   rename(Phenolics = `766`, 
          Flavonoids = `416`, 
          Saponins = `430`, 
@@ -56,7 +64,7 @@ values.df <- bind_rows(values, .id = "sampleID") %>%
   full_join(master)
 
 
-write.csv(values.df, "isha/Harvard Master2.csv", row.names = FALSE)
+write.csv(values.df, "olivia/Harvard Master2.csv", row.names = FALSE)
 
 
 
