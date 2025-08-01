@@ -36,8 +36,22 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   ggthemes::theme_tufte() +
   facet_wrap(~treatment, nrow = 1)
 
+df.sum.AA <- df.sum %>%
+  filter(treatment == "AA")
+
+df.AA <- df %>%
+  filter(treatment == "AA")
 
 
+
+ggplot(data = df.sum.AA, aes(x = time, y = meanDamage)) +
+  geom_ribbon(aes(ymin = semin, ymax = semax, fill = treatment),
+              alpha = .2) +
+  geom_line(aes(color = treatment), linewidth = 2) +
+  geom_line(data = df.AA, aes(y = damage, group = id, color = treatment),
+            linewidth = 0.5, alpha = 0.5) +
+  ggthemes::theme_tufte() +
+  facet_wrap(~treatment, nrow = 1)
 
 
 
