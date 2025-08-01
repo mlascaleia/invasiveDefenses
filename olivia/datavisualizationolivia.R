@@ -19,7 +19,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
     geom_point() +
     scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"), 
                       name = "Treatments") +
-    scale_x_discrete(label=c("AA Absent","AA Present","LP Absent", "LP Present"))+
+    scale_x_discrete(label=c("AA Absent","AA Present","LF Absent", "LF Present"))+
     xlab("Treatments") +
     ylab(y_label) +
     theme_tufte() +
@@ -47,7 +47,7 @@ process_columns <- function(data, columns_to_plot)
                    file_suffix = file_suffix)
   }
 
-#whole plant traits
+#chemical analyses
 all_data <- read_csv("olivia/Harvard Master2.csv")
 all_data$treatment <- stringr::str_extract(all_data$Leaf.Number, "^..")
 
@@ -67,5 +67,20 @@ process_columns(all_data, columns_to_plot)
 
 
 
+#physical tests
+all_data_physical <- read_csv("olivia/Harvard Master2.csv") #rename based on file name
+all_data_physical$treatment <- stringr::str_extract(all_data_physical$Leaf.Number, "^..")
 
+# Define which columns to plot and their labels
+columns_to_plot_physical <- list(
+  list(column = "Flavonoids", label = "Flavonoids", file_suffix = "Flavonoids"),
+  list(column = "Phenolics", label = "Phenolics", file_suffix = "Phenolics"),
+  list(column = "Saponins", label = "Saponins", file_suffix = "Saponins"),
+  list(column = "Terpenoids", label = "Terpenoids", file_suffix = "Terpenoids"),
+  list(column = "Tannins", label = "Tannins", file_suffix = "Tannins")
+  # rename columns
+)
+
+# Run the plotting process
+process_columns(all_data, columns_to_plot_physical)
 

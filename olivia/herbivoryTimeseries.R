@@ -25,36 +25,31 @@ df.sum <- df %>%
   mutate(semax = meanDamage + (1.96*se),
          semin = meanDamage - (1.96*se))
 
-# make figure
 
+# make figure
 ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   geom_ribbon(aes(ymin = semin, ymax = semax, fill = treatment),
               alpha = .2) +
   geom_line(aes(color = treatment), linewidth = 2) +
-  geom_line(data = df, aes(y = damage, group = id, color = treatment), 
+  geom_line(data = df, aes(y = damage, group = id, color = treatment),
             linewidth = 0.5, alpha = 0.5) +
   ggthemes::theme_tufte() +
-  facet_wrap(~treatment, nrow = 1)
+  xlab("Time (Hours)")+
+  ylab("Leaf Damage (%)")+
+  scale_x_continuous(
+    name = "Time",
+    breaks = seq(0, 96, by = 24),
+    limits = c(0, 96),
+    labels = scales::comma
+  ) +
+  facet_wrap(~treatment, nrow = 1)+
+  theme_tufte() +
+  theme(legend.position = "none")+
+  scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))+
+  scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))
+  
 
-df.sum.AA <- df.sum %>%
-  filter(treatment == "AA")
-
-df.AA <- df %>%
-  filter(treatment == "AA")
-
-
-
-ggplot(data = df.sum.AA, aes(x = time, y = meanDamage)) +
-  geom_ribbon(aes(ymin = semin, ymax = semax, fill = treatment),
-              alpha = .2) +
-  geom_line(aes(color = treatment), linewidth = 2) +
-  geom_line(data = df.AA, aes(y = damage, group = id, color = treatment),
-            linewidth = 0.5, alpha = 0.5) +
-  ggthemes::theme_tufte() +
-  facet_wrap(~treatment, nrow = 1)
-
-
-
+ggsave("olivia/.png") #rename and save image
 
 
 
