@@ -1,0 +1,25 @@
+Simaroubaceae Species,Trichomes,Leaf Number,Toughness (N),Thickness (mm),Mass (mg),Dried Mass (mg),Water content,Caterpillar Mass Before (mg),Caterpillar Mass After (mg),Caterpillar Mass Change,Notes
+Florida Corkwood (Leitneria floridana),Present,LP01,0.44,0.183,723,239,484,2.32,4.075,1.755,
+Florida Corkwood (Leitneria floridana),Present,LP02,0.3,0.11,843,212,631,23.52,25.375,1.855,
+Florida Corkwood (Leitneria floridana),Present,LP03,0.26,0.142,1406,305,1101,13.72,8.845,-4.875,
+Florida Corkwood (Leitneria floridana),Present,LP04,0.42,0.135,879,214,665,12.985,7.67,-5.315,dead
+Florida Corkwood (Leitneria floridana),Present,LP05,0.51,0.21,1494,435,1059,20.145,13.29,-6.855,
+Florida Corkwood (Leitneria floridana),Present,LP06,0.26,0.142,971,219,752,0.5,0.43,-0.07,
+Florida Corkwood (Leitneria floridana),Absent,LA13,0.56,0.135,804,245,559,22.255,41.05,18.795,
+Florida Corkwood (Leitneria floridana),Absent,LA14,0.51,0.119,1039,264,775,26.96,41.17,14.21,
+Florida Corkwood (Leitneria floridana),Absent,LA15,0.51,0.161,1676,375,1301,19.615,44.83,25.215,
+Florida Corkwood (Leitneria floridana),Absent,LA16,0.54,0.177,818,258,560,6.85,16.68,9.83,
+Florida Corkwood (Leitneria floridana),Absent,LA17,0.54,0.131,722,205,517,7.855,19.4,11.545,
+Florida Corkwood (Leitneria floridana),Absent,LA18,0.36,0.149,1812,405,1407,0.64,,-0.64,no longer in study
+Tree of Heaven (Ailanthus altissima),Present,AP01,0.62,0.136,619,207,412,24.21,26.035,1.825,
+Tree of Heaven (Ailanthus altissima),Present,AP02,0.53,0.119,773,229,544,4.375,10.2,5.825,
+Tree of Heaven (Ailanthus altissima),Present,AP03,0.65,0.137,611,212,399,1.705,0.69,-1.015,dead
+Tree of Heaven (Ailanthus altissima),Present,AP04,0.69,0.118,949,201,748,7.135,21.185,14.05,
+Tree of Heaven (Ailanthus altissima),Present,AP05,0.74,0.117,834,143,691,2.607,3.66,1.053,
+Tree of Heaven (Ailanthus altissima),Present,AP06,0.43,0.112,516,188,328,4.3105,11.93,7.6195,
+Tree of Heaven (Ailanthus altissima),Absent,AA13,0.66,0.122,561,164,397,2.095,1.86,-0.235,
+Tree of Heaven (Ailanthus altissima),Absent,AA14,0.57,0.122,645,226,419,16.41,28.115,11.705,
+Tree of Heaven (Ailanthus altissima),Absent,AA15,0.65,0.133,626,228,398,28.8,41.315,12.515,
+Tree of Heaven (Ailanthus altissima),Absent,AA16,0.7,0.122,563,227,336,8.32,10.72,2.4,
+Tree of Heaven (Ailanthus altissima),Absent,AA17,0.63,0.118,379,297,82,1.509,1.2,-0.309,
+Tree of Heaven (Ailanthus altissima),Absent,AA18,0.62,0.108,292,146,146,0.775,2.475,1.7,

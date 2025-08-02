@@ -50,6 +50,7 @@ process_columns <- function(data, columns_to_plot)
 #chemical analyses
 all_data <- read_csv("olivia/Harvard Master2.csv")
 all_data$treatment <- stringr::str_extract(all_data$Leaf.Number, "^..")
+colnames(all_data)
 
 # Define which columns to plot and their labels
 columns_to_plot <- list(
@@ -68,18 +69,18 @@ process_columns(all_data, columns_to_plot)
 
 
 #physical tests
-all_data_physical <- read_csv("olivia/Harvard Master2.csv") #rename based on file name
-all_data_physical$treatment <- stringr::str_extract(all_data_physical$Leaf.Number, "^..")
+all_data_physical <- read_csv("olivia/physicalData.csv") #rename based on file name
+all_data_physical$treatment <- stringr::str_extract(all_data_physical$LeafNumber, "^..")
+colnames(all_data_physical)
 
 # Define which columns to plot and their labels
 columns_to_plot_physical <- list(
-  list(column = "Flavonoids", label = "Flavonoids", file_suffix = "Flavonoids"),
-  list(column = "Phenolics", label = "Phenolics", file_suffix = "Phenolics"),
-  list(column = "Saponins", label = "Saponins", file_suffix = "Saponins"),
-  list(column = "Terpenoids", label = "Terpenoids", file_suffix = "Terpenoids"),
-  list(column = "Tannins", label = "Tannins", file_suffix = "Tannins")
-  # rename columns
-)
+  list(column = "Toughness (N)", label = "Toughness (N)", file_suffix = "Toughness"),
+  list(column = "Thickness (mm)", label = "Thickness (mm)", file_suffix = "Thickness"),
+  list(column = "Mass (mg)", label = "Mass (mg)", file_suffix = "Mass"),
+  list(column = "Dried Mass (mg)", label = "Dry Mass (mg)", file_suffix = "DryMass"),
+  list(column = "Caterpillar Mass Change", label = "Change in Mass (mg)", file_suffix = "CaterpillarMass")
+  )
 
 # Run the plotting process
 process_columns(all_data, columns_to_plot_physical)

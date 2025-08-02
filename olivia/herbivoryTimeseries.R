@@ -43,7 +43,16 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
     limits = c(0, 96),
     labels = scales::comma
   ) +
-  facet_wrap(~treatment, nrow = 1)+
+  facet_wrap(
+    ~treatment, 
+    nrow = 1,
+    labeller = labeller(treatment = c(
+      "AA" = "EA",      # Replace with your actual treatment names
+      "AP" = "EP",        # and desired labels
+      "LA" = "NA",
+      "LP" = "NP"
+    ))
+  ) +
   theme_tufte() +
   theme(legend.position = "none")+
   scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))+
