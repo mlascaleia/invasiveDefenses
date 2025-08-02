@@ -6,3 +6,4 @@
 *.xlsx
 *.pper
 *.DS_Store
+.Rproj.user

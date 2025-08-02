@@ -48,6 +48,7 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))
   
 
+<<<<<<< HEAD
 ggsave("olivia/.totalLeafDamage.png") #rename and save image
 
 
@@ -69,6 +70,11 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
 
 
 ggsave("olivia/meanDamage.png")
+=======
+ggsave("olivia/finalplots/PercentDamage.png") #rename and save image
+
+
+>>>>>>> ed35d4f (editing plot for final images)
 
 
 
