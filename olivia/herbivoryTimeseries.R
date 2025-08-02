@@ -66,8 +66,9 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
     labels = scales::comma
   ) +
   theme_tufte() +
-  scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))+
-  scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))
+  scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"), labels = c("EA", "EP", "NA", "NP"))+
+  scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"), labels = c("EA", "EP", "NA", "NP"))+
+  labs(fill = "Treatment", color = "Treatment")  # Changes the legend title
 
 
 ggsave("olivia/meanDamage.png")
