@@ -1,4 +1,6 @@
 library(tidyverse)
+library(ggplot2)
+library(ggthemes)
 
 df <- read.csv("olivia/Harvard Master2.csv") %>%
   rename(`24` = Damage.at.24.HR....,
@@ -36,7 +38,7 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   xlab("Time (Hours)")+
   ylab("Leaf Damage (%)")+
   scale_x_continuous(
-    name = "Time",
+    name = "Time (Hours)",
     breaks = seq(0, 96, by = 24),
     limits = c(0, 96),
     labels = scales::comma
@@ -48,7 +50,7 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))
   
 
-ggsave("olivia/.totalLeafDamage.png") #rename and save image
+ggsave("olivia/totalLeafDamage.png") #rename and save image
 
 
 ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
@@ -58,7 +60,7 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   xlab("Time (Hours)")+
   ylab("Leaf Damage (%)")+
   scale_x_continuous(
-    name = "Time",
+    name = "Time (Hours)",
     breaks = seq(0, 96, by = 24),
     limits = c(0, 96),
     labels = scales::comma

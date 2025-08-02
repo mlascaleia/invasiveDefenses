@@ -19,7 +19,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
     geom_point() +
     scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"), 
                       name = "Treatments") +
-    scale_x_discrete(label=c("AA Absent","AA Present","LF Absent", "LF Present"))+
+    scale_x_discrete(label=c("EA","EP","NA", "NP"))+
     xlab("Treatments") +
     ylab(y_label) +
     theme_tufte() +
