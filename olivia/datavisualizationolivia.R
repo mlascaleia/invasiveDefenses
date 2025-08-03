@@ -70,7 +70,7 @@ process_columns(all_data, columns_to_plot)
 
 #physical tests
 all_data_physical <- read_csv("olivia/physicalData.csv") #rename based on file name
-all_data_physical$treatment <- stringr::str_extract(all_data_physical$LeafNumber, "^..")
+all_data_physical$treatment <- stringr::str_extract(all_data_physical$"Leaf Number", "^..")
 colnames(all_data_physical)
 
 # Define which columns to plot and their labels
@@ -83,5 +83,5 @@ columns_to_plot_physical <- list(
   )
 
 # Run the plotting process
-process_columns(all_data, columns_to_plot_physical)
+process_columns(all_data_physical, columns_to_plot_physical)
 

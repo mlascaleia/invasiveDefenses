@@ -207,9 +207,14 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
     geom_boxplot(aes(fill = Type)) +
     geom_point() +
     scale_fill_manual(values = c("thistle", "olivedrab3", "lemonchiffon")) +
-    labs(x = "Species Type", y = y_label) +
-    theme_tufte() +
-    theme(legend.position = "none")
+    labs(x = NULL, y = NULL) +
+    theme_tufte(18) +
+    theme(legend.position = "none")+
+    scale_x_discrete(labels = c(
+      "Invasive" = "I",
+      "Native" = "N",
+      "Non-invasive exotic" = "NIE"
+    ))
   
   # Add significance letters if they exist
   if (nrow(plot_letters) > 0) {
@@ -232,7 +237,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
   }
   
   # Save plot
-  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 6, height = 6)
+  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 3, height = 6)
 }
 
 # Modified processing function
