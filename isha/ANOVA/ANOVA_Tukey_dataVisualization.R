@@ -237,7 +237,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
   }
   
   # Save plot
-  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 3, height = 6)
+  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 4, height = 6)
 }
 
 # Modified processing function
