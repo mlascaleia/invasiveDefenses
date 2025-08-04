@@ -26,8 +26,8 @@ detailed_results <- list()
 
 # Columns to analyze
 columns_to_analyze <- c("Plant.height..ft.", "Dry.mass..mg.", "Nitrogen.content",
-                        "Carbon.content", "C.N.ratio", "Flavonoids", "Phenolics", 
-                        "Saponins", "Terpenoids", "Tannins")
+                        "C.N.ratio", "Flavonoids", "Phenolics", 
+                        "Terpenoids", "Tannins", "Average.water.content....")
 
 # Set significance threshold (typically 0.05)
 alpha_level <- 0.05

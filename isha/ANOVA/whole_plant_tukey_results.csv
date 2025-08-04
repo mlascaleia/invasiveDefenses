@@ -1,12 +1,11 @@
 "Variable","Type","Mean","Groups","Note"
+"Average.water.content....",NA,NA,NA,"Not significant (p > 0.05)"
 "C.N.ratio",NA,NA,NA,"Not significant (p > 0.05)"
-"Carbon.content",NA,NA,NA,"Not significant (p > 0.05)"
 "Dry.mass..mg.",NA,NA,NA,"Not significant (p > 0.05)"
 "Flavonoids",NA,NA,NA,"Not significant (p > 0.05)"
 "Nitrogen.content",NA,NA,NA,"Not significant (p > 0.05)"
 "Phenolics",NA,NA,NA,"Not significant (p > 0.05)"
 "Plant.height..ft.",NA,NA,NA,"Not significant (p > 0.05)"
-"Saponins",NA,NA,NA,"Not significant (p > 0.05)"
 "Tannins","Invasive",0.258314945833333,"b",NA
 "Tannins","Native",0.298287585333333,"ab",NA
 "Tannins","Non-invasive exotic",0.7879367212,"a",NA
