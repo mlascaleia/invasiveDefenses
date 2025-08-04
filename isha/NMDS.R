@@ -1,9 +1,17 @@
+# the purpose of this script is to run nmds and pca for all my data
+# and create pngs of the data
+
+# clear environment
+rm(list = ls())
 
 
 
 #load packages
 library(dplyr)
 library(vegan)
+library(ggplot2)
+library(ggfortify)
+
 
 # Read your CSV file
 my_data <- read.csv("isha/NMDS data.csv", header = TRUE, row.names = 2)
@@ -29,6 +37,9 @@ my_point_colors <- c("thistle4", "olivedrab4", "lemonchiffon4")
 
 my_ellipse_colors <- c("thistle", "olivedrab3", "lemonchiffon")
 
+
+
+png("isha/Plots/nmds_plot.png", width = 8, height = 6, units = "in", res = 300)
 
 
 plot(nmds_result, type = "n", main = "NMDS Plot with Group Ellipses")
@@ -61,8 +72,51 @@ legend(x = "topright",           # Position (try "topright", "bottomleft", etc.)
 
 
 
+## PCA Analysis -----------------------------------------------------------
 
+# 1. Scale the data (important for PCA with different measurement units)
+scaled_data <- scale(selected_data)
 
+# 2. Run PCA
+pca_result <- prcomp(scaled_data)
+
+# 3. View summary
+summary(pca_result)
+
+# 4. View loadings (variable contributions)
+print(pca_result$rotation)
+
+# 5. View eigenvalues (variance explained)
+pca_eigenvalues <- pca_result$sdev^2
+print(pca_eigenvalues)
+
+## PCA Visualization ------------------------------------------------------
+
+# Scree plot (variance explained by each PC)
+png("isha/Plots/pca_scree_plot.png", width = 8, height = 6, units = "in", res = 300)
+plot(pca_eigenvalues, type = "b", pch = 19, 
+     xlab = "Principal Component", ylab = "Eigenvalue",
+     main = "Scree Plot of PCA")
+dev.off()
+
+# Biplot with groups
+png("isha/Plots/pca_biplot.png", width = 8, height = 6, units = "in", res = 300)
+biplot(pca_result, cex = c(0.7, 0.9), 
+       col = c("gray50", "black"),
+       xlab = paste0("PC1 (", round(summary(pca_result)$importance[2,1]*100, 1), "%)"),
+       ylab = paste0("PC2 (", round(summary(pca_result)$importance[2,2]*100, 1), "%)"))
+dev.off()
+
+# Enhanced ggplot version with ellipses
+png("isha/Plots/pca_ggplot.png", width = 8, height = 6, units = "in", res = 300)
+autoplot(pca_result, data = my_data, colour = 'Type',
+         loadings = TRUE, loadings.label = TRUE,
+         loadings.label.size = 3, loadings.label.colour = 'black',
+         frame = TRUE, frame.type = 'norm') +
+  scale_color_manual(values = my_point_colors) +
+  theme_minimal() +
+  ggtitle("PCA of Plant Traits by Species Type")
+dev.off()
 
 
 
