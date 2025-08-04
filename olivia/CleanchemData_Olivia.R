@@ -63,6 +63,7 @@ values.df <- bind_rows(values, .id = "Leaf.Number") %>%
          Terpenoids = `600`) %>%
   full_join(master)
 
+values.df$X96.HR[values.df$Leaf.Number == "AA13"] <- 24.22
 
 write.csv(values.df, "olivia/Harvard Master2.csv", row.names = FALSE)
 
