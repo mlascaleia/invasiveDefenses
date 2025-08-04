@@ -237,7 +237,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
   }
   
   # Save plot
-  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 5, height = 6) #changing width to 3, 4, or 5
+  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 4, height = 6) #changing width to 3, 4, or 5
 }
 
 # Modified processing function
@@ -272,7 +272,6 @@ columns_to_plot <- list(
   list(column = "C:N ratio", label = "C:N Ratio", file_suffix = "CNRatio"),
   list(column = "Flavonoids", label = "Flavonoids", file_suffix = "Flavonoids"),
   list(column = "Phenolics", label = "Phenolics", file_suffix = "Phenolics"),
-  list(column = "Saponins", label = "Saponins", file_suffix = "Saponins"),
   list(column = "Terpenoids", label = "Terpenoids", file_suffix = "Terpenoids"),
   list(column = "Tannins", label = "Tannins", file_suffix = "Tannins"),
   list(column = "Average water content (%)", label = "Average Water Content (%)", file_suffix = "WaterContent")
