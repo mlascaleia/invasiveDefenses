@@ -209,7 +209,8 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
     scale_fill_manual(values = c("thistle", "olivedrab3", "lemonchiffon")) +
     labs(x = NULL, y = NULL) +
     theme_tufte(18) +
-    #theme(legend.position = "none")+
+    #theme(legend.title = "none")+
+    labs(color = "Species Type")+
     scale_x_discrete(labels = c(
       "Invasive" = "I",
       "Native" = "N",
