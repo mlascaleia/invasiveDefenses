@@ -263,6 +263,7 @@ process_columns <- function(data, columns_to_plot, tukey_data) {
 
 #whole plant traits
 master_whole <- read_csv("isha/Harvard Master.csv")
+colnames(master_whole)
 
 # Define which columns to plot and their labels
 columns_to_plot <- list(
@@ -275,7 +276,8 @@ columns_to_plot <- list(
   list(column = "Phenolics", label = "Phenolics", file_suffix = "Phenolics"),
   list(column = "Saponins", label = "Saponins", file_suffix = "Saponins"),
   list(column = "Terpenoids", label = "Terpenoids", file_suffix = "Terpenoids"),
-  list(column = "Tannins", label = "Tannins", file_suffix = "Tannins")
+  list(column = "Tannins", label = "Tannins", file_suffix = "Tannins"),
+  list(column = "Average water content (%)", label = "Average Water Content (%)", file_suffix = "WaterContent")
 )
 
 
@@ -286,7 +288,6 @@ colnames(master_leaf)
 
 # Define which columns to plot and their labels
 columns_to_plot_leaf <- list(
-  list(column = "Mass (mg)", label = "Mass (mg)", file_suffix = "Mass"),
   list(column = "Toughness (N)", label = "Toughness (N)", file_suffix = "Toughness"),
   list(column = "Thickness (mm)", label = "Thickness (mm)", file_suffix = "Thickness")
 )
