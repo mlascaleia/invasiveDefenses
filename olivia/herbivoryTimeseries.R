@@ -53,7 +53,7 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
       "LP" = "NP"
     ))
   ) +
-  theme_tufte() +
+  theme_tufte(18) +
   theme(legend.position = "none")+
   scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))+
   scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))

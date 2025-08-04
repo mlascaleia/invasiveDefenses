@@ -38,6 +38,10 @@ dif2 <- dif %>%
   mutate(species = str_extract(Leaf.Number,"^(A|L)"),
          trichomes = str_extract(Leaf.Number, "(?<=^.)."))
 
+
+
+#Model for Trichomes and species
+
 m1 <- lm(slope ~ trichomes, data = dif2)
 summary(m1)
 
@@ -51,23 +55,91 @@ m4 <- glm(slope ~ trichomes*species, data = dif2)
 summary(m4)
 null <- lm(slope ~ 1, data = dif2)
 
+#AIC Test
 lapply(list(m1,m2,m3,m4,null),AIC)
+#m4 the best model- report m3
 
-m5 <- lm(Phenolics ~ trichomes+species, data = dif2)
-summary(m1)
+#Model for Phenolics and trichomes
+m5 <- lm(Phenolics ~ trichomes, data = dif2)
+summary(m5)
 
 m6 <- lm (Phenolics ~ species, data = dif2)
-summary(m2)
+summary(m6)
 
 m7 <- lm(Phenolics ~ trichomes+species, data = dif2)
-summary(m3)
+summary(m7)
 
 m8 <- glm(Phenolics ~ trichomes*species, data = dif2)
-summary(m4)
-null <- lm(slope ~ 1, data = dif2)
+summary(m8)
 
-lapply(list(m1,m2,m3,m4,null),AIC)
+null <- lm(Phenolics ~ 1, data = dif2)
 
+#AIC Test
+lapply(list(m5,m6,m7,m8,null),AIC)
+#m6 is the best model
+
+
+
+#Model for Flavonoids and trichomes
+m9 <- lm(Flavonoids ~ trichomes, data = dif2)
+summary(m9)
+
+m10 <- lm (Flavonoids ~ species, data = dif2)
+summary(m10)
+
+m11 <- lm(Flavonoids ~ trichomes+species, data = dif2)
+summary(m11)
+
+m12 <- glm(Flavonoids ~ trichomes*species, data = dif2)
+summary(m12)
+
+null <- lm(Flavonoids ~ 1, data = dif2)
+
+#AIC Test
+lapply(list(m9,m10,m11,m12,null),AIC)
+#m3
+
+
+#Model for Saponins and trichomes
+m13 <- lm(Saponins ~ trichomes, data = dif2)
+summary(m9)
+
+m14 <- lm (Saponins ~ species, data = dif2)
+summary(m10)
+
+m15 <- lm(Saponins ~ trichomes+species, data = dif2)
+summary(m11)
+
+m16 <- glm(Saponins ~ trichomes*species, data = dif2)
+summary(m12)
+
+null <- lm(Saponins ~ 1, data = dif2)
+
+#AIC Test
+lapply(list(m13,m14,m15,m16,null),AIC)
+#m3
+
+
+
+
+#Model for Terpenoids and trichomes
+m17 <- lm(Terpenoids ~ trichomes, data = dif2)
+summary(m9)
+
+m18 <- lm (Terpenoids ~ species, data = dif2)
+summary(m10)
+
+m19 <- lm(Terpenoids ~ trichomes+species, data = dif2)
+summary(m11)
+
+m20 <- glm(Terpenoids ~ trichomes*species, data = dif2)
+summary(m12)
+
+null <- lm(Terpenoids ~ 1, data = dif2)
+
+#AIC Test
+lapply(list(m17,m18,m19,m20,null),AIC)
+#models super super similar - m19 best
 
 bigM <- lm(slope ~ Flavonoids + Phenolics + Saponins + Tannins, data = dif2)
 summary(bigM)
