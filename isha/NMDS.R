@@ -33,7 +33,7 @@ nmds_result <- metaMDS(selected_data,
 nmds_result$stress
 
 # Define colors for groups (replace with your preferred colors)
-my_point_colors <- c("thistle4", "olivedrab4", "lemonchiffon4")
+my_point_colors <- c("thistle3", "olivedrab4", "gold")
 
 my_ellipse_colors <- c("thistle", "olivedrab3", "lemonchiffon")
 
@@ -51,14 +51,20 @@ par(family = "serif", bg = NA)
 plot(nmds_result, type = "n", main = "NMDS Plot of Species Type Data", bg = NA)
 
 
-# Color points using custom palette
-points(nmds_result, display = "sites", pch = 16, 
-       col = my_point_colors[as.numeric(grouping_var)],  # Map colors to groups
-       cex = 1.0)  # Adjust point size
+# Define point shapes for each group (you can choose any numbers 0-25)
+my_point_shapes <- c(16, 17, 15)  # 16=circle, 17=triangle, 15=square
+
+# Color points using custom palette with different shapes
+points(nmds_result, display = "sites", 
+       pch = my_point_shapes[as.numeric(grouping_var)],  # Different shapes per group
+       col = my_point_colors[as.numeric(grouping_var)], # Map colors to groups
+       cex = 1.5)  # Slightly larger points for better visibility
+
+
 
 # Add ellipses with custom colors
 ordiellipse(
-  nmds_result, 
+  nmds_result,
   groups = grouping_var,
   kind = "sd",
   draw = "polygon",
@@ -68,14 +74,16 @@ ordiellipse(
   alpha = 100              # Transparency (0-255)
 )
 
-# Add legend
-legend(x = "topright",           # Position (try "topright", "bottomleft", etc.)
-  legend = levels(grouping_var),
-  fill = my_ellipse_colors[1:length(levels(grouping_var))],
-  col = my_point_colors[1:length(levels(grouping_var))],
-  title = "Species Type",
-  xpd = TRUE            # Allow plotting outside main plot area
-)
+# Add legend with both colors and shapes
+# legend(x = "topright",
+#        legend = levels(grouping_var),
+#        pch = my_point_shapes[1:length(levels(grouping_var))],
+#        col = my_point_colors[1:length(levels(grouping_var))],
+#        pt.bg = my_point_colors[1:length(levels(grouping_var))], # For shapes 21-25 that have fill
+#        title = "Species Type",
+#        xpd = TRUE
+# )
+
 
 dev.off()
 
