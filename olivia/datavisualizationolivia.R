@@ -19,7 +19,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
     geom_point() +
     scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"), 
                       name = "Treatments") +
-    scale_x_discrete(label=c("AA Absent","AA Present","LF Absent", "LF Present"))+
+    scale_x_discrete(label=c("EA","EP","NA", "NP"))+
     xlab("Treatments") +
     ylab(y_label) +
     theme_tufte() +
@@ -50,6 +50,7 @@ process_columns <- function(data, columns_to_plot)
 #chemical analyses
 all_data <- read_csv("olivia/Harvard Master2.csv")
 all_data$treatment <- stringr::str_extract(all_data$Leaf.Number, "^..")
+colnames(all_data)
 
 # Define which columns to plot and their labels
 columns_to_plot <- list(
