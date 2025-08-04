@@ -209,8 +209,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
     scale_fill_manual(values = c("thistle", "olivedrab3", "lemonchiffon")) +
     labs(x = NULL, y = NULL) +
     theme_tufte(18) +
-    #theme(legend.title = "none")+
-    labs(color = "Species Type")+
+    theme(legend.position = "none")+
     scale_x_discrete(labels = c(
       "Invasive" = "I",
       "Native" = "N",
@@ -229,8 +228,8 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
         data = plot_letters,
         aes(x = Type, y = y_max, label = Groups),
         vjust = -0.2, 
-        size = 5, 
-        color = "black"
+        size = 7, 
+        color = "black", fontface = "bold"
       )
     }
   } else {
@@ -238,7 +237,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
   }
   
   # Save plot
-  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 4, height = 6)
+  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 5, height = 6) #changing width to 3, 4, or 5
 }
 
 # Modified processing function
@@ -269,9 +268,7 @@ colnames(master_whole)
 # Define which columns to plot and their labels
 columns_to_plot <- list(
   list(column = "Plant height (ft)", label = "Plant Height (ft)", file_suffix = "PlantHeight"),
-  list(column = "Dry mass (mg)", label = "Dry Mass (mg)", file_suffix = "DryMass"),
   list(column = "Nitrogen content", label = "Nitrogen Content", file_suffix = "NitrogenContent"),
-  list(column = "Carbon content", label = "Carbon Content", file_suffix = "CarbonContent"),
   list(column = "C:N ratio", label = "C:N Ratio", file_suffix = "CNRatio"),
   list(column = "Flavonoids", label = "Flavonoids", file_suffix = "Flavonoids"),
   list(column = "Phenolics", label = "Phenolics", file_suffix = "Phenolics"),
@@ -296,3 +293,10 @@ columns_to_plot_leaf <- list(
 # Run plotting with Tukey data
 process_columns(master_whole, columns_to_plot, whole_tukey)
 process_columns(master_leaf, columns_to_plot_leaf, leaf_tukey)
+
+
+
+
+
+
+

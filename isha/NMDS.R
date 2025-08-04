@@ -38,16 +38,23 @@ my_point_colors <- c("thistle4", "olivedrab4", "lemonchiffon4")
 my_ellipse_colors <- c("thistle", "olivedrab3", "lemonchiffon")
 
 
+# Save as PNG with transparent background
+png("isha/Plots/NMDS_plot.png", 
+    width = 8, 
+    height = 6, 
+    units = "in", 
+    res = 300,
+    bg = "transparent")  # This makes the background transparent
 
-png("isha/Plots/nmds_plot.png", width = 8, height = 6, units = "in", res = 300)
+# Create the plot with transparent background
+par(family = "serif", bg = NA)
+plot(nmds_result, type = "n", main = "NMDS Plot of Species Type Data", bg = NA)
 
-
-plot(nmds_result, type = "n", main = "NMDS Plot with Group Ellipses")
 
 # Color points using custom palette
 points(nmds_result, display = "sites", pch = 16, 
        col = my_point_colors[as.numeric(grouping_var)],  # Map colors to groups
-       cex = 0.7)  # Adjust point size
+       cex = 1.0)  # Adjust point size
 
 # Add ellipses with custom colors
 ordiellipse(
@@ -64,15 +71,23 @@ ordiellipse(
 # Add legend
 legend(x = "topright",           # Position (try "topright", "bottomleft", etc.)
   legend = levels(grouping_var),
-  fill = my_point_colors[1:length(levels(grouping_var))],
+  fill = my_ellipse_colors[1:length(levels(grouping_var))],
   col = my_point_colors[1:length(levels(grouping_var))],
   title = "Species Type",
   xpd = TRUE            # Allow plotting outside main plot area
 )
 
+dev.off()
 
 
-## PCA Analysis -----------------------------------------------------------
+
+
+
+
+
+----------------------------------------------------------------------
+
+# PCA Analysis 
 
 # 1. Scale the data (important for PCA with different measurement units)
 scaled_data <- scale(selected_data)
@@ -90,7 +105,9 @@ print(pca_result$rotation)
 pca_eigenvalues <- pca_result$sdev^2
 print(pca_eigenvalues)
 
-## PCA Visualization ------------------------------------------------------
+
+
+# PCA Visualization
 
 # Scree plot (variance explained by each PC)
 png("isha/Plots/pca_scree_plot.png", width = 8, height = 6, units = "in", res = 300)
