@@ -2,7 +2,8 @@ library(tidyverse)
 library(ggplot2)
 library(ggthemes)
 
-df <- read.csv("olivia/Harvard Master2.csv") %>%
+
+df <- read.csv("olivia/Scans.csv") %>%
   rename(`24` = Damage.at.24.HR....,
          `48` = Damage.at.48.HR....,
          `72` = Damage.at.72.HR....,
@@ -12,6 +13,7 @@ df <- read.csv("olivia/Harvard Master2.csv") %>%
   select(id = Leaf.Number, treatment, `0`, `24`, `48`, `72`, `96`) %>%
   pivot_longer(`0`:`96`, names_to = "time", values_to = "damage") %>%
   mutate(time = as.integer(time))
+
 
 # add in dummy data
 # (things should usually go down but they may go up a little with the dummy data)
@@ -45,7 +47,7 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   ) +
   facet_wrap(
     ~treatment, 
-    nrow = 1,
+    nrow = 2,
     labeller = labeller(treatment = c(
       "AA" = "EA",      # Replace with your actual treatment names
       "AP" = "EP",        # and desired labels
@@ -76,18 +78,14 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
     limits = c(0, 96),
     labels = scales::comma
   ) +
-  theme_tufte() +
-  scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"), labels = c("EA", "EP", "NA", "NP"))+
-  scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"), labels = c("EA", "EP", "NA", "NP"))+
+  theme_tufte(18) +
+  theme(legend.position = "none")+
+  scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))+
+  scale_color_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"))+
   labs(fill = "Treatment", color = "Treatment")  # Changes the legend title
 
 
 ggsave("olivia/meanDamage.png")
-=======
-ggsave("olivia/finalplots/PercentDamage.png") #rename and save image
-
-
->>>>>>> ed35d4f (editing plot for final images)
 
 
 
