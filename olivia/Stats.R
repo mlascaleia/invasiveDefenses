@@ -102,16 +102,16 @@ lapply(list(m9,m10,m11,m12,null),AIC)
 
 #Model for Saponins and trichomes
 m13 <- lm(Saponins ~ trichomes, data = dif2)
-summary(m9)
+summary(m13)
 
 m14 <- lm (Saponins ~ species, data = dif2)
-summary(m10)
+summary(m14)
 
 m15 <- lm(Saponins ~ trichomes+species, data = dif2)
-summary(m11)
+summary(m15)
 
 m16 <- glm(Saponins ~ trichomes*species, data = dif2)
-summary(m12)
+summary(m16)
 
 null <- lm(Saponins ~ 1, data = dif2)
 
@@ -124,16 +124,16 @@ lapply(list(m13,m14,m15,m16,null),AIC)
 
 #Model for Terpenoids and trichomes
 m17 <- lm(Terpenoids ~ trichomes, data = dif2)
-summary(m9)
+summary(m17)
 
 m18 <- lm (Terpenoids ~ species, data = dif2)
-summary(m10)
+summary(m18)
 
 m19 <- lm(Terpenoids ~ trichomes+species, data = dif2)
-summary(m11)
+summary(m19)
 
 m20 <- glm(Terpenoids ~ trichomes*species, data = dif2)
-summary(m12)
+summary(m20)
 
 null <- lm(Terpenoids ~ 1, data = dif2)
 
