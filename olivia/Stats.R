@@ -100,20 +100,20 @@ lapply(list(m9,m10,m11,m12,null),AIC)
 #m3
 
 
-#Model for Saponins and trichomes
-m13 <- lm(Saponins ~ trichomes, data = dif2)
+#Model for Tannins and trichomes
+m13 <- lm(Tannins ~ trichomes, data = dif2)
 summary(m13)
 
-m14 <- lm (Saponins ~ species, data = dif2)
+m14 <- lm (Tannins ~ species, data = dif2)
 summary(m14)
 
-m15 <- lm(Saponins ~ trichomes+species, data = dif2)
+m15 <- lm(Tannins ~ trichomes+species, data = dif2)
 summary(m15)
 
-m16 <- glm(Saponins ~ trichomes*species, data = dif2)
+m16 <- glm(Tannins ~ trichomes*species, data = dif2)
 summary(m16)
 
-null <- lm(Saponins ~ 1, data = dif2)
+null <- lm(Tannins ~ 1, data = dif2)
 
 #AIC Test
 lapply(list(m13,m14,m15,m16,null),AIC)
