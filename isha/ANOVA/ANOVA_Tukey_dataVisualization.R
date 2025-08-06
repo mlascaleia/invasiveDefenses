@@ -78,6 +78,13 @@ for (col in columns_to_analyze) {
   }
 }
 
+
+data2 <- data %>%
+  mutate(isInv = ifelse(Type == "Invasive", 1, 0))
+
+
+summary(lm(Plant.height..ft. ~ isInv, data = data2))
+
 # Combine ANOVA results safely
 detailed_combined <- bind_rows(detailed_results)
 
