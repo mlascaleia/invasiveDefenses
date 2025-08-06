@@ -32,9 +32,9 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
                       labels = c("Native Intact", "Native Removed", "Exotic Intact", "Exotic Removed")) +
     xlab("Treatments") +
     ylab(y_label) +
-    theme_tufte(18) +
+    theme_tufte(24) +
     theme(
-      legend.position = "none",
+      legend.position = "right",
       text = element_text(color = "white"),
       axis.text = element_text(color = "white"),
       axis.text.x = element_blank(),
