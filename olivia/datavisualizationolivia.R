@@ -17,9 +17,9 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
   ggplot(data = data, mapping = aes(x = treatment, y = {{ y_var }})) +
     geom_boxplot(aes(fill = treatment)) +
     geom_point() +
-    scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen3"), 
+    scale_fill_manual(values = c("lightsalmon","peachpuff","darkolivegreen4","darkolivegreen2"), 
                       name = "Treatments") +
-    scale_x_discrete(label=c("EA","EP","NA", "NP"))+
+    scale_x_discrete(label=c("NR","EI","ER","EA"))+
     xlab("Treatments") +
     ylab(y_label) +
     theme_tufte() +
