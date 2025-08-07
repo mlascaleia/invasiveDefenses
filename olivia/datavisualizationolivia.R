@@ -27,7 +27,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
                  color = "white",
                  width = 0.2) +
     geom_point(color = "white") +
-    scale_fill_manual(values = c("darkolivegreen4", "olivedrab3", "lightsalmon", "peachpuff"), 
+    scale_fill_manual(values = c("mediumseagreen", "darkolivegreen2", "lightsalmon", "peachpuff"), 
                       name = "Treatments",
                       labels = c("Native Intact", "Native Removed", "Exotic Intact", "Exotic Removed")) +
     xlab("Treatments") +

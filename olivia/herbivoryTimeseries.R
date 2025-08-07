@@ -67,8 +67,8 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
     panel.grid.minor = element_blank(),
     legend.text = element_text(color = "white"),  # Legend text
     legend.title = element_text(color = "white"))+
-  scale_fill_manual(values = c("darkolivegreen4","olivedrab3", "lightsalmon","peachpuff"), labels = c("Native Intact", "Native Removed", "Exotic Intact", "Exotic Removed"))+
-  scale_color_manual(values = c("darkolivegreen4","olivedrab3", "lightsalmon","peachpuff"), labels = c("Native Intact", "Native Removed", "Exotic Intact", "Exotic Removed"))+
+  scale_fill_manual(values = c("mediumseagreen","olivedrab3", "lightsalmon","peachpuff"), labels = c("Native Intact", "Native Removed", "Exotic Intact", "Exotic Removed"))+
+  scale_color_manual(values = c("mediumseagreen","olivedrab3", "lightsalmon","peachpuff"), labels = c("Native Intact", "Native Removed", "Exotic Intact", "Exotic Removed"))+
   labs(fill = "Treatment", color = "Treatment")
 
 ggsave("olivia/meanDamage.png")
