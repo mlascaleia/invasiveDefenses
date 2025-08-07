@@ -40,7 +40,7 @@ my_ellipse_colors <- c("thistle", "olivedrab3", "lemonchiffon")
 
 # Save as PNG with transparent background
 png("isha/Plots/NMDS_plot.png", 
-    width = 8, 
+    width = 10, 
     height = 6, 
     units = "in", 
     res = 300,
@@ -74,15 +74,15 @@ ordiellipse(
   alpha = 100              # Transparency (0-255)
 )
 
-# Add legend with both colors and shapes
-# legend(x = "topright",
-#        legend = levels(grouping_var),
-#        pch = my_point_shapes[1:length(levels(grouping_var))],
-#        col = my_point_colors[1:length(levels(grouping_var))],
-#        pt.bg = my_point_colors[1:length(levels(grouping_var))], # For shapes 21-25 that have fill
-#        title = "Species Type",
-#        xpd = TRUE
-# )
+#Add legend with both colors and shapes
+legend(x = "topright",
+       legend = levels(grouping_var),
+       pch = my_point_shapes[1:length(levels(grouping_var))],
+       col = my_point_colors[1:length(levels(grouping_var))],
+       pt.bg = my_point_colors[1:length(levels(grouping_var))], # For shapes 21-25 that have fill
+       title = "Species Type",
+       xpd = TRUE
+)
 
 
 dev.off()
