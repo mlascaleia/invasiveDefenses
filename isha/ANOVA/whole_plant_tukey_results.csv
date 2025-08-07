@@ -6,6 +6,9 @@
 "Nitrogen.content",NA,NA,NA,"Not significant (p > 0.05)"
 "Phenolics",NA,NA,NA,"Not significant (p > 0.05)"
 "Plant.height..ft.",NA,NA,NA,"Not significant (p > 0.05)"
+"SLA..mm2.mg.","Invasive",2.67580743433333,"a",NA
+"SLA..mm2.mg.","Native",2.03403236966667,"ab",NA
+"SLA..mm2.mg.","Non-invasive exotic",1.7025532078,"b",NA
 "Tannins","Invasive",0.258314945833333,"b",NA
 "Tannins","Native",0.298287585333333,"ab",NA
 "Tannins","Non-invasive exotic",0.7879367212,"a",NA

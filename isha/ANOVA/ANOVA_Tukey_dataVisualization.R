@@ -27,7 +27,7 @@ detailed_results <- list()
 # Columns to analyze
 columns_to_analyze <- c("Plant.height..ft.", "Dry.mass..mg.", "Nitrogen.content",
                         "C.N.ratio", "Flavonoids", "Phenolics", 
-                        "Terpenoids", "Tannins", "Average.water.content....")
+                        "Terpenoids", "Tannins", "Average.water.content....", "SLA..mm2.mg.")
 
 # Set significance threshold (typically 0.05)
 alpha_level <- 0.05
@@ -181,6 +181,16 @@ write.csv(tukey_combined, "isha/ANOVA/leaf_tukey_results.csv", row.names = FALSE
 whole_tukey <- read_csv("isha/ANOVA/whole_plant_tukey_results.csv")
 leaf_tukey <- read_csv("isha/ANOVA/leaf_tukey_results.csv")
 
+whole_tukey <- whole_tukey %>%
+  mutate(Variable = case_when(
+    Variable == "SLA..mm2.mg." ~ "SLA (mm2/mg)",
+    Variable == "Average.water.content...." ~ "Average water content (%)",
+    Variable == "Nitrogen.content" ~ "Nitrogen content",
+    Variable == "C.N.ratio" ~ "C:N ratio",
+    Variable == "Plant.height..ft." ~ "Plant height (ft)",
+    TRUE ~ Variable
+  ))
+
 leaf_tukey <- leaf_tukey %>%
   mutate(Variable = case_when(
     Variable == "Mass..mg." ~ "Mass (mg)",
@@ -244,7 +254,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
   }
   
   # Save plot
-  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 4, height = 6) #changing width to 3, 4, or 5
+  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 3, height = 6) #changing width to 3, 4, or 5
 }
 
 # Modified processing function
@@ -281,7 +291,8 @@ columns_to_plot <- list(
   list(column = "Phenolics", label = "Phenolics", file_suffix = "Phenolics"),
   list(column = "Terpenoids", label = "Terpenoids", file_suffix = "Terpenoids"),
   list(column = "Tannins", label = "Tannins", file_suffix = "Tannins"),
-  list(column = "Average water content (%)", label = "Average Water Content (%)", file_suffix = "WaterContent")
+  list(column = "Average water content (%)", label = "Average Water Content (%)", file_suffix = "WaterContent"),
+  list(column = "SLA (mm2/mg)", label = "Specific Leaf Area (mm2/mg)", file_suffix = "SpecificLeafArea")
 )
 
 
