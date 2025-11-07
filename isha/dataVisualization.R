@@ -13,7 +13,7 @@ library(ggthemes)
 
 # Define your plotting function
 create_boxplot <- function(data, y_var, y_label, file_suffix) {
-  ggplot(data = data, mapping = aes(x = Type, y = {{ y_var }})) +
+  p <- ggplot(data = data, mapping = aes(x = Type, y = {{ y_var }})) +
     geom_boxplot(aes(fill = Type)) +
     geom_point() +
     scale_fill_manual(values = c("thistle", "olivedrab3", "lemonchiffon"), 
@@ -25,7 +25,12 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
           plot.title = element_text(hjust = 0.5))
   
   # Save with dynamic filename
-  ggsave(paste0("isha/Plots/", file_suffix, ".png"))
+  ggsave(paste0("invasiveDefenses/isha/Plots/", file_suffix, ".png"),
+         plot = p,
+         width = 7,      # Adjust as needed
+         height = 8,     # Adjust as needed
+         units = "in",
+         dpi = 300)
 }
 
 
@@ -46,8 +51,8 @@ process_columns <- function(data, columns_to_plot)
   }
 
 #whole plant traits
-master_whole <- read_csv("isha/Harvard Master.csv")
-
+master_whole <- read_csv("invasiveDefenses/isha/Harvard Master.csv")
+colnames(master_whole)
 # Define which columns to plot and their labels
 columns_to_plot <- list(
   list(column = "Plant height (ft)", label = "Plant Height (ft)", file_suffix = "PlantHeight"),
@@ -59,7 +64,9 @@ columns_to_plot <- list(
   list(column = "Phenolics", label = "Phenolics", file_suffix = "Phenolics"),
   list(column = "Saponins", label = "Saponins", file_suffix = "Saponins"),
   list(column = "Terpenoids", label = "Terpenoids", file_suffix = "Terpenoids"),
-  list(column = "Tannins", label = "Tannins", file_suffix = "Tannins")
+  list(column = "Tannins", label = "Tannins", file_suffix = "Tannins"),
+  list(column = "Average water content (%)", label = "Average water content (%)", file_suffix = "WaterContent"),
+  list(column = "SLA (mm2/mg)", label = "SLA (mm2/mg)", file_suffix = "SLA")
   # Add more columns as needed
 )
 
@@ -69,7 +76,7 @@ process_columns(master_whole, columns_to_plot)
 
 
 # leaf traits
-master_leaf <- read_csv("isha/Harvard MasterLeaf.csv")
+master_leaf <- read_csv("invasiveDefenses/isha/Harvard MasterLeaf.csv")
 colnames(master_leaf)
 
 # Define which columns to plot and their labels

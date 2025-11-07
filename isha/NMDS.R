@@ -12,13 +12,23 @@ library(vegan)
 library(ggplot2)
 library(ggfortify)
 
-
 # Read your CSV file
-my_data <- read.csv("isha/NMDS data.csv", header = TRUE, row.names = 2)
+my_data <- read.csv("invasiveDefenses/isha/NMDS data.csv", header = TRUE, row.names = 2)
 selected_data <- my_data %>%
   mutate(Growth.Form = as.numeric(as.factor(my_data$Growth.Form))) %>%
-  select(Growth.Form, Plant.height..ft., Nitrogen.content, C.N.ratio, Flavonoids, Phenolics, Terpenoids, Tannins, Average.toughness..N., Average.thickness..mm., Average.water.content....)
-
+  select(
+    Growth_Form = Growth.Form,
+    PlantHeight = Plant.height..ft.,
+    Nitrogen = Nitrogen.content,
+    CN_ratio = C.N.ratio,
+    Flavonoids = Flavonoids,
+    Phenolics = Phenolics,
+    Terpenoids = Terpenoids,
+    Tannins = Tannins,
+    Toughness = Average.toughness..N.,
+    Thickness = Average.thickness..mm.,
+    WaterContent = Average.water.content....
+  )
 grouping_var <- as.factor(my_data$Type)
 
 # Run NMDS on your subsetted data
@@ -32,6 +42,11 @@ nmds_result <- metaMDS(selected_data,
 # Check stress value (should be <0.2 ideally)
 nmds_result$stress
 
+# Fit environmental vectors
+env_vectors <- envfit(nmds_result, selected_data, permutations = 999, na.rm = TRUE)
+
+
+
 # Define colors for groups (replace with your preferred colors)
 my_point_colors <- c("thistle3", "olivedrab4", "gold")
 
@@ -39,7 +54,7 @@ my_ellipse_colors <- c("thistle", "olivedrab3", "lemonchiffon")
 
 
 # Save as PNG with transparent background
-png("isha/Plots/NMDS_plot.png", 
+png("invasiveDefenses/isha/Plots/NMDS_plot.png", 
     width = 10, 
     height = 6, 
     units = "in", 
@@ -73,6 +88,10 @@ ordiellipse(
   lwd = 1,                 # Border line width
   alpha = 100              # Transparency (0-255)
 )
+
+# Add environmental vectors
+plot(env_vectors, p.max = 0.05, col = "black", lwd = 2)  # Only significant vectors (p < 0.05)
+
 
 #Add legend with both colors and shapes
 legend(x = "topright",

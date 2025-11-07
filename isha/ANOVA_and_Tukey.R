@@ -13,8 +13,8 @@ library(dplyr)
 #whole plant
 
 # Read the CSV file
-data <- read.csv("isha/Harvard Master.csv", header = TRUE)
-
+data <- read.csv("invasiveDefenses/isha/Harvard Master.csv", header = TRUE)
+colnames(data)
 # Create empty lists to store results
 anova_results <- list()
 tukey_results <- list()
@@ -23,7 +23,7 @@ detailed_results <- list()
 # Columns to analyze
 columns_to_analyze <- c("Plant.height..ft.", "Dry.mass..mg.", "Nitrogen.content",
                         "Carbon.content", "C.N.ratio", "Flavonoids", "Phenolics", 
-                        "Saponins", "Terpenoids", "Tannins")
+                        "Saponins", "Terpenoids", "Tannins", "Average.water.content....", "SLA..mm2.mg.")
 
 # Set significance threshold (typically 0.05)
 alpha_level <- 0.05
@@ -37,10 +37,16 @@ for (col in columns_to_analyze) {
   anova_model <- aov(formula, data = data)
   anova_results[[col]] <- anova_model
   
-  # Store tidy ANOVA results with effect size
+  # Store tidy ANOVA results with effect size AND F-statistic
   anova_tidy <- broom::tidy(anova_model)
   anova_tidy$eta_sq <- anova_tidy$sumsq / sum(anova_tidy$sumsq)
   anova_tidy$Variable <- col  # Add variable name to each result
+  
+  # The F-statistic is already in the tidy output as 'statistic'
+  # Let's rename it to be more explicit
+  anova_tidy <- anova_tidy %>%
+    rename(F_statistic = statistic)
+  
   detailed_results[[col]] <- anova_tidy
   
   # Check if ANOVA is significant (p < alpha_level)
@@ -82,14 +88,12 @@ tukey_combined <- bind_rows(tukey_results) %>%
   arrange(Variable, Type)  # Sort by variable then type
 
 # Save results
-write.csv(detailed_combined, "isha/ANOVA/whole_plant_anova_results.csv", row.names = FALSE)
-write.csv(tukey_combined, "isha/ANOVA/whole_plant_tukey_results.csv", row.names = FALSE)
-
-
+write.csv(detailed_combined, "invasiveDefenses/isha/ANOVA/whole_plant_anova_results.csv", row.names = FALSE)
+write.csv(tukey_combined, "invasiveDefenses/isha/ANOVA/whole_plant_tukey_results.csv", row.names = FALSE)
 #leaf
 
 # Read the CSV file
-data <- read.csv("isha/Harvard MasterLeaf.csv", header = TRUE)
+data <- read.csv("invasiveDefenses/isha/Harvard MasterLeaf.csv", header = TRUE)
 
 # Create empty lists to store results
 anova_results <- list()
@@ -111,10 +115,15 @@ for (col in columns_to_analyze) {
   anova_model <- aov(formula, data = data)
   anova_results[[col]] <- anova_model
   
-  # Store tidy ANOVA results with effect size
+  # Store tidy ANOVA results with effect size AND F-statistic
   anova_tidy <- broom::tidy(anova_model)
   anova_tidy$eta_sq <- anova_tidy$sumsq / sum(anova_tidy$sumsq)
   anova_tidy$Variable <- col  # Add variable name to each result
+  
+  # Rename the statistic column to F_statistic
+  anova_tidy <- anova_tidy %>%
+    rename(F_statistic = statistic)
+  
   detailed_results[[col]] <- anova_tidy
   
   # Check if ANOVA is significant (p < alpha_level)
@@ -156,6 +165,6 @@ tukey_combined <- bind_rows(tukey_results) %>%
   arrange(Variable, Type)  # Sort by variable then type
 
 # Save results
-write.csv(detailed_combined, "isha/ANOVA/leaf_anova_results.csv", row.names = FALSE)
-write.csv(tukey_combined, "isha/ANOVA/leaf_tukey_results.csv", row.names = FALSE)
+write.csv(detailed_combined, "invasiveDefenses/isha/ANOVA/leaf_anova_results.csv", row.names = FALSE)
+write.csv(tukey_combined, "invasiveDefenses/isha/ANOVA/leaf_tukey_results.csv", row.names = FALSE)
 

@@ -17,8 +17,8 @@ library(ggthemes)
 #whole plant
 
 # Read the CSV file
-data <- read.csv("isha/Harvard Master.csv", header = TRUE)
-
+data <- read.csv("invasiveDefenses/isha/Harvard Master.csv", header = TRUE)
+colnames(data)
 # Create empty lists to store results
 anova_results <- list()
 tukey_results <- list()
@@ -93,14 +93,14 @@ tukey_combined <- bind_rows(tukey_results) %>%
   arrange(Variable, Type)  # Sort by variable then type
 
 # Save results
-write.csv(detailed_combined, "isha/ANOVA/whole_plant_anova_results.csv", row.names = FALSE)
-write.csv(tukey_combined, "isha/ANOVA/whole_plant_tukey_results.csv", row.names = FALSE)
+write.csv(detailed_combined, "invasiveDefenses/isha/ANOVA/whole_plant_anova_results.csv", row.names = FALSE)
+write.csv(tukey_combined, "invasiveDefenses/isha/ANOVA/whole_plant_tukey_results.csv", row.names = FALSE)
 
 
 #leaf
 
 # Read the CSV file
-data <- read.csv("isha/Harvard MasterLeaf.csv", header = TRUE)
+data <- read.csv("invasiveDefenses/isha/Harvard MasterLeaf.csv", header = TRUE)
 
 # Create empty lists to store results
 anova_results <- list()
@@ -168,18 +168,18 @@ tukey_combined <- bind_rows(tukey_results) %>%
   arrange(Variable, Type)  # Sort by variable then type
 
 # Save results
-write.csv(detailed_combined, "isha/ANOVA/leaf_anova_results.csv", row.names = FALSE)
-write.csv(tukey_combined, "isha/ANOVA/leaf_tukey_results.csv", row.names = FALSE)
+write.csv(detailed_combined, "invasiveDefenses/isha/ANOVA/leaf_anova_results.csv", row.names = FALSE)
+write.csv(tukey_combined, "invasiveDefenses/isha/ANOVA/leaf_tukey_results.csv", row.names = FALSE)
 
 
 
 
-#data visualization
+# data visualization
 
 
 # Load Tukey results (add this near the top after your ANOVA code)
-whole_tukey <- read_csv("isha/ANOVA/whole_plant_tukey_results.csv")
-leaf_tukey <- read_csv("isha/ANOVA/leaf_tukey_results.csv")
+whole_tukey <- read_csv("invasiveDefenses/isha/ANOVA/whole_plant_tukey_results.csv")
+leaf_tukey <- read_csv("invasiveDefenses/isha/ANOVA/leaf_tukey_results.csv")
 
 whole_tukey <- whole_tukey %>%
   mutate(Variable = case_when(
@@ -224,7 +224,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
     geom_boxplot(aes(fill = Type)) +
     geom_point() +
     scale_fill_manual(values = c("thistle", "olivedrab3", "lemonchiffon")) +
-    labs(x = NULL, y = NULL) +
+    labs(x = "Species Type", y = y_label) +
     theme_tufte(18) +
     theme(legend.position = "none")+
     scale_x_discrete(labels = c(
@@ -254,7 +254,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
   }
   
   # Save plot
-  ggsave(paste0("isha/Plots/", file_suffix, ".png"), plot = p, width = 3, height = 6) #changing width to 3, 4, or 5
+  ggsave(paste0("invasiveDefenses/isha/Plots/", file_suffix, ".png"), plot = p, width = 7, height = 8) #changing width to 3, 4, or 5
 }
 
 # Modified processing function
@@ -279,7 +279,7 @@ process_columns <- function(data, columns_to_plot, tukey_data) {
 # [Rest of your code remains the same]
 
 #whole plant traits
-master_whole <- read_csv("isha/Harvard Master.csv")
+master_whole <- read_csv("invasiveDefenses/isha/Harvard Master.csv")
 colnames(master_whole)
 
 # Define which columns to plot and their labels
@@ -298,7 +298,7 @@ columns_to_plot <- list(
 
 
 # leaf traits
-master_leaf <- read_csv("isha/Harvard MasterLeaf.csv")
+master_leaf <- read_csv("invasiveDefenses/isha/Harvard MasterLeaf.csv")
 colnames(master_leaf)
 
 # Define which columns to plot and their labels
