@@ -20,13 +20,13 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
   
   ggplot(data = data, mapping = aes(x = treatment, y = {{ y_var }})) +
     geom_boxplot(aes(fill = treatment),
-                 color = "white",               # Outline color
-                 outlier.color = "white",       # Outlier points color
+                 color = "black",               # Outline color
+                 outlier.color = "black",       # Outlier points color
                  alpha = 0.7) +                 # Slightly transparent fill
     stat_boxplot(geom = "errorbar",             # Whiskers
-                 color = "white",
+                 color = "black",
                  width = 0.2) +
-    geom_point(color = "white") +
+    geom_point(color = "black") +
     scale_fill_manual(values = c("mediumseagreen", "darkolivegreen2", "lightsalmon", "peachpuff"), 
                       name = "Treatments",
                       labels = c("Native Intact", "Native Removed", "Exotic Intact", "Exotic Removed")) +
@@ -35,14 +35,14 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
     theme_tufte(24) +
     theme(
       legend.position = "right",
-      text = element_text(color = "white"),
-      axis.text = element_text(color = "white"),
+      text = element_text(color = "black"),
+      axis.text = element_text(color = "black"),
       axis.text.x = element_blank(),
-      axis.title = element_text(color = "white"),
-      axis.ticks = element_line(color = "white"),
+      axis.title = element_text(color = "black"),
+      axis.ticks = element_line(color = "black"),
       axis.ticks.x = element_blank(),
-      legend.text = element_text(color = "white"),
-      legend.title = element_text(color = "white"),
+      legend.text = element_text(color = "black"),
+      legend.title = element_text(color = "black"),
       plot.title = element_text(hjust = 0.5))
   
   # Save with dynamic filename

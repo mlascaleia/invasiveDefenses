@@ -14,3 +14,4 @@ columns_to_plot_physical <- list(
 
 # Run the plotting process
 process_columns(all_data_physical, columns_to_plot_physical)
+
