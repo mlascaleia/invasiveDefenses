@@ -1,7 +1,5 @@
 # the purpose of this script is to create box plots of all the data
-# and save them as png's in the folder "Plots"
-
-
+# and save them as png's in the folder "finalplots"
 
 
 
@@ -27,7 +25,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix) {
                  color = "black",
                  width = 0.2) +
     geom_point(color = "black") +
-    scale_fill_manual(values = c("mediumseagreen", "darkolivegreen2", "lightsalmon", "peachpuff"), 
+    scale_fill_manual(values = c("darkgreen", "olivedrab2","darkmagenta", "plum"), 
                       name = "Treatments",
                       labels = c("Native Intact", "Native Removed", "Exotic Intact", "Exotic Removed")) +
     xlab("Treatments") +
@@ -102,7 +100,89 @@ process_columns(all_data_physical, columns_to_plot_physical)
 
 
 
-# # clear environment
+
+
+
+
+
+
+## grid of chemical defenses
+
+# Load required packages
+library(ggtext)
+library(patchwork)
+
+# Update your create_boxplot function
+create_boxplot <- function(data, y_var, y_label) {
+  # Convert treatment to factor with specified order
+  data$treatment <- factor(data$treatment, levels = c("LP", "LA", "AP", "AA"))
+  
+  ggplot(data = data, mapping = aes(x = treatment, y = {{ y_var }})) +
+    geom_boxplot(aes(fill = treatment),
+                 color = "black",
+                 outlier.color = "black",
+                 alpha = 0.7) +
+    stat_boxplot(geom = "errorbar",
+                 color = "black",
+                 width = 0.2) +
+    geom_point(color = "black") +
+    scale_fill_manual(
+      values = c("darkgreen", "olivedrab2", "darkmagenta", "plum"), 
+      name = NULL,  # Remove legend title
+      labels = c(
+        "<i>L. floridana</i> present", 
+        "<i>L. floridana</i> absent", 
+        "<i>A. altissima</i> present", 
+        "<i>A. altissima</i> absent"
+      )
+    ) +
+    xlab(NULL) +  # Remove x-axis label
+    ylab(y_label) +
+    theme_tufte(18) +
+    theme(
+      legend.position = "none",
+      text = element_text(color = "black"),
+      axis.text = element_text(color = "black"),
+      axis.text.x = element_blank(),
+      axis.title.x = element_blank(),
+      axis.title = element_text(color = "black"),
+      axis.ticks = element_line(color = "black"),
+      axis.ticks.x = element_blank(),
+      plot.title = element_blank(),
+      # Use element_markdown() for legend text to parse HTML tags
+      legend.text = element_markdown(size = 12)
+    )
+}
+
+# Create individual plots WITHOUT titles
+flavonoids_plot <- create_boxplot(all_data, Flavonoids, "Relative Flavonoids")
+phenolics_plot <- create_boxplot(all_data, Phenolics, "Relative Phenolics")
+tannins_plot <- create_boxplot(all_data, Tannins, "Relative Tannins")
+terpenoids_plot <- create_boxplot(all_data, Terpenoids, "Relative Terpenoids")
+
+# OPTION 1: 2x2 grid
+grid_4 <- (flavonoids_plot | phenolics_plot) / 
+  (tannins_plot | terpenoids_plot)
+
+# Add a common legend with ggtext parsing
+grid_4_with_legend <- grid_4 + 
+  plot_layout(guides = 'collect') &
+  theme(
+    legend.position = 'bottom',
+    legend.text = element_markdown(size = 14)  # Use element_markdown for legend
+  )
+
+# Save the 2x2 grid
+ggsave("olivia/finalplots/chemical_grid_2x2.png", 
+       plot = grid_4_with_legend, 
+       width = 12, height = 10, dpi = 300)
+
+
+
+
+
+
+
 # rm(list = ls())
 # 
 # 
