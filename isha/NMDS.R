@@ -13,14 +13,14 @@ library(ggplot2)
 library(ggfortify)
 
 # Read your CSV file
-my_data <- read.csv("invasiveDefenses/isha/NMDS data.csv", header = TRUE, row.names = 2)
+my_data <- read.csv("isha/NMDS data.csv", header = TRUE, row.names = 2)
 selected_data <- my_data %>%
   mutate(Growth.Form = as.numeric(as.factor(my_data$Growth.Form))) %>%
   select(
-    Growth_Form = Growth.Form,
+    GrowthForm = Growth.Form,
     PlantHeight = Plant.height..ft.,
     Nitrogen = Nitrogen.content,
-    CN_ratio = C.N.ratio,
+    CarbonNitrogenRatio = C.N.ratio,
     Flavonoids = Flavonoids,
     Phenolics = Phenolics,
     Terpenoids = Terpenoids,
@@ -54,7 +54,7 @@ my_ellipse_colors <- c("thistle", "olivedrab3", "lemonchiffon")
 
 
 # Save as PNG with transparent background
-png("invasiveDefenses/isha/Plots/NMDS_plot.png", 
+png("isha/Plots/NMDS_plot.png", 
     width = 10, 
     height = 6, 
     units = "in", 
@@ -90,7 +90,7 @@ ordiellipse(
 )
 
 # Add environmental vectors
-plot(env_vectors, p.max = 0.05, col = "black", lwd = 2)  # Only significant vectors (p < 0.05)
+plot(env_vectors, col = "black", lwd = 2)  # Only significant vectors (p < 0.05)
 
 
 #Add legend with both colors and shapes

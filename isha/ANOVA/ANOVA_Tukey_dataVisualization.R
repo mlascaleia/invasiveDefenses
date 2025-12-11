@@ -12,12 +12,12 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(ggthemes)
-
+library(patchwork)  # Added for combining plots
 
 #whole plant
 
 # Read the CSV file
-data <- read.csv("invasiveDefenses/isha/Harvard Master.csv", header = TRUE)
+data <- read.csv("isha/Harvard Master.csv", header = TRUE)
 colnames(data)
 # Create empty lists to store results
 anova_results <- list()
@@ -93,14 +93,14 @@ tukey_combined <- bind_rows(tukey_results) %>%
   arrange(Variable, Type)  # Sort by variable then type
 
 # Save results
-write.csv(detailed_combined, "invasiveDefenses/isha/ANOVA/whole_plant_anova_results.csv", row.names = FALSE)
-write.csv(tukey_combined, "invasiveDefenses/isha/ANOVA/whole_plant_tukey_results.csv", row.names = FALSE)
+write.csv(detailed_combined, "isha/ANOVA/whole_plant_anova_results.csv", row.names = FALSE)
+write.csv(tukey_combined, "isha/ANOVA/whole_plant_tukey_results.csv", row.names = FALSE)
 
 
 #leaf
 
 # Read the CSV file
-data <- read.csv("invasiveDefenses/isha/Harvard MasterLeaf.csv", header = TRUE)
+data <- read.csv("isha/Harvard MasterLeaf.csv", header = TRUE)
 
 # Create empty lists to store results
 anova_results <- list()
@@ -168,8 +168,8 @@ tukey_combined <- bind_rows(tukey_results) %>%
   arrange(Variable, Type)  # Sort by variable then type
 
 # Save results
-write.csv(detailed_combined, "invasiveDefenses/isha/ANOVA/leaf_anova_results.csv", row.names = FALSE)
-write.csv(tukey_combined, "invasiveDefenses/isha/ANOVA/leaf_tukey_results.csv", row.names = FALSE)
+write.csv(detailed_combined, "isha/ANOVA/leaf_anova_results.csv", row.names = FALSE)
+write.csv(tukey_combined, "isha/ANOVA/leaf_tukey_results.csv", row.names = FALSE)
 
 
 
@@ -178,8 +178,8 @@ write.csv(tukey_combined, "invasiveDefenses/isha/ANOVA/leaf_tukey_results.csv", 
 
 
 # Load Tukey results (add this near the top after your ANOVA code)
-whole_tukey <- read_csv("invasiveDefenses/isha/ANOVA/whole_plant_tukey_results.csv")
-leaf_tukey <- read_csv("invasiveDefenses/isha/ANOVA/leaf_tukey_results.csv")
+whole_tukey <- read_csv("isha/ANOVA/whole_plant_tukey_results.csv")
+leaf_tukey <- read_csv("isha/ANOVA/leaf_tukey_results.csv")
 
 whole_tukey <- whole_tukey %>%
   mutate(Variable = case_when(
@@ -205,10 +205,8 @@ all_tukey <- bind_rows(
   leaf_tukey %>% mutate(Source = "Leaf")
 )
 
-# [Previous code remains the same until the visualization section]
-
-# Modified plotting function
-create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
+# Modified plotting function for single plots
+create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data, plot_label = NULL) {
   # Convert y_var to string for lookup
   y_var_str <- as_label(enquo(y_var))
   
@@ -226,7 +224,7 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
     scale_fill_manual(values = c("thistle", "olivedrab3", "lemonchiffon")) +
     labs(x = "Species Type", y = y_label) +
     theme_tufte(18) +
-    theme(legend.position = "none")+
+    theme(legend.position = "none",  panel.border = element_rect(color = "black", fill = NA, linewidth = 1)) +
     scale_x_discrete(labels = c(
       "Invasive" = "I",
       "Native" = "N",
@@ -244,17 +242,30 @@ create_boxplot <- function(data, y_var, y_label, file_suffix, tukey_data) {
       p <- p + geom_text(
         data = plot_letters,
         aes(x = Type, y = y_max, label = Groups),
-        vjust = -0.2, 
+        vjust = 1.5, 
         size = 7, 
-        color = "black", fontface = "bold"
+        color = "black"
       )
     }
   } else {
     message("No Tukey data available for: ", y_var_str)
   }
   
-  # Save plot
-  ggsave(paste0("invasiveDefenses/isha/Plots/", file_suffix, ".png"), plot = p, width = 7, height = 8) #changing width to 3, 4, or 5
+  # Add plot label (A, B, C, D) if specified - LOWER POSITION
+  if (!is.null(plot_label)) {
+    # Position label lower by adjusting vjust to a higher value
+    p <- p + 
+      annotate("text", x = 0.5, y = Inf, label = plot_label, 
+               hjust = 0, vjust = 2, size = 8, fontface = "bold")  # Changed vjust from 1 to 3
+  }
+  
+  # Save individual plot if file_suffix is provided
+  if (!is.null(file_suffix)) {
+    ggsave(paste0("isha/Plots/", file_suffix, ".png"), 
+           plot = p, width = 7, height = 8)
+  }
+  
+  return(p)
 }
 
 # Modified processing function
@@ -276,13 +287,71 @@ process_columns <- function(data, columns_to_plot, tukey_data) {
   }
 }
 
-# [Rest of your code remains the same]
+# Function to create the grid of 4 plots
+create_four_plot_grid <- function(master_whole, master_leaf, whole_tukey, leaf_tukey) {
+  # Create the four individual plots with labels
+  plot1 <- create_boxplot(
+    data = master_whole,
+    y_var = `SLA (mm2/mg)`,
+    y_label = "Specific Leaf Area (mm²/mg)",
+    file_suffix = NULL,  # Don't save individual plot
+    tukey_data = whole_tukey,
+    plot_label = "A"
+  )
+  
+  plot2 <- create_boxplot(
+    data = master_whole,
+    y_var = Tannins,
+    y_label = "Relative Tannins",
+    file_suffix = NULL,
+    tukey_data = whole_tukey,
+    plot_label = "B"
+  )
+  
+  plot3 <- create_boxplot(
+    data = master_leaf,
+    y_var = `Toughness (N)`,
+    y_label = "Leaf Toughness (N)",
+    file_suffix = NULL,
+    tukey_data = leaf_tukey,
+    plot_label = "C"
+  )
+  
+  plot4 <- create_boxplot(
+    data = master_leaf,
+    y_var = `Thickness (mm)`,
+    y_label = "Leaf Thickness (mm)",
+    file_suffix = NULL,
+    tukey_data = leaf_tukey,
+    plot_label = "D"
+  )
+  
+  # Combine plots into a 2x2 grid
+  combined_plot <- (plot1 + plot2) / (plot3 + plot4) +
+    plot_layout(guides = 'collect') &
+    theme(legend.position = 'none')
+  
+  # Save the combined plot
+  ggsave("isha/Plots/four_trait_grid.png", 
+         plot = combined_plot, 
+         width = 16,  # Wider for 2 plots side by side
+         height = 16, # Taller for 2 rows
+         dpi = 300)
+  
+  # Also save as PDF for publication quality
+  ggsave("isha/Plots/four_trait_grid.pdf", 
+         plot = combined_plot, 
+         width = 16,
+         height = 16)
+  
+  return(combined_plot)
+}
 
-#whole plant traits
-master_whole <- read_csv("invasiveDefenses/isha/Harvard Master.csv")
-colnames(master_whole)
+# Load data
+master_whole <- read_csv("isha/Harvard Master.csv")
+master_leaf <- read_csv("isha/Harvard MasterLeaf.csv")
 
-# Define which columns to plot and their labels
+# Run standard individual plots (optional)
 columns_to_plot <- list(
   list(column = "Plant height (ft)", label = "Plant Height (ft)", file_suffix = "PlantHeight"),
   list(column = "Nitrogen content", label = "Nitrogen Content", file_suffix = "NitrogenContent"),
@@ -295,24 +364,22 @@ columns_to_plot <- list(
   list(column = "SLA (mm2/mg)", label = "Specific Leaf Area (mm2/mg)", file_suffix = "SpecificLeafArea")
 )
 
-
-
-# leaf traits
-master_leaf <- read_csv("invasiveDefenses/isha/Harvard MasterLeaf.csv")
-colnames(master_leaf)
-
-# Define which columns to plot and their labels
 columns_to_plot_leaf <- list(
   list(column = "Toughness (N)", label = "Toughness (N)", file_suffix = "Toughness"),
   list(column = "Thickness (mm)", label = "Thickness (mm)", file_suffix = "Thickness")
 )
 
-# Run plotting with Tukey data
+# Run individual plotting (optional)
 process_columns(master_whole, columns_to_plot, whole_tukey)
 process_columns(master_leaf, columns_to_plot_leaf, leaf_tukey)
 
+# Create and save the 4-plot grid
+grid_plot <- create_four_plot_grid(master_whole, master_leaf, whole_tukey, leaf_tukey)
 
+# Display the grid plot
+print(grid_plot)
 
+cat("Grid plot saved as 'isha/Plots/four_trait_grid.png' and '.pdf'\n")
 
 
 
