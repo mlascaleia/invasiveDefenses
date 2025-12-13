@@ -1,7 +1,4 @@
 "Variable","Type","Mean","Groups"
-"Mass..mg.","Invasive",167.7,"b"
-"Mass..mg.","Native",169,"ab"
-"Mass..mg.","Non-invasive exotic",303.8,"a"
 "Thickness..mm.","Invasive",0.120033333333333,"b"
 "Thickness..mm.","Native",0.161133333333333,"a"
 "Thickness..mm.","Non-invasive exotic",0.16856,"a"
