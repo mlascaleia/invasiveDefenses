@@ -69,7 +69,7 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   scale_fill_manual(
     values = c(
       "<i>A. altissima</i> absent" = "darkmagenta",
-      "<i>A. altissima</i> present" = "plum",
+      "<i>A. altissima</i> present" = "orchid",
       "<i>L. floridana</i> absent" = "darkgreen",
       "<i>L. floridana</i> present" = "olivedrab2"
     )
@@ -77,7 +77,7 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
   scale_color_manual(
     values = c(
       "<i>A. altissima</i> absent" = "darkmagenta",
-      "<i>A. altissima</i> present" = "plum",
+      "<i>A. altissima</i> present" = "orchid",
       "<i>L. floridana</i> absent" = "darkgreen",
       "<i>L. floridana</i> present" = "olivedrab2"
     )
@@ -85,6 +85,95 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
 
 ggsave("olivia/totalLeafDamage.png")
 
+
+## caterpillar mass vs leaf ate ----
+
+
+# Read data
+caterpillar <- read.csv("olivia/physicaldata.csv")
+leaf <- read.csv("olivia/Harvard Master2.csv")
+
+# Calculate leaf consumed and extract treatment from Leaf.Number
+leaf <- leaf %>%
+  mutate(
+    leaf_consumed = X0.HR - X96.HR,
+    treatment_code = str_extract(Leaf.Number, "^..")  # Extract first 2 characters
+  )
+
+# Combine the data
+combined <- caterpillar %>%
+  left_join(leaf, by = "Leaf.Number")
+
+# Create treatment names with HTML tags for display
+combined <- combined %>%
+  mutate(
+    treatment = case_when(
+      treatment_code == "AP" ~ "<i>A. altissima</i> present",
+      treatment_code == "AA" ~ "<i>A. altissima</i> absent", 
+      treatment_code == "LP" ~ "<i>L. floridana</i> present",
+      treatment_code == "LA" ~ "<i>L. floridana</i> absent",
+      TRUE ~ treatment_code
+    ),
+    group = ifelse(str_detect(treatment_code, "^A"), 
+                   "<i>A. altissima</i>", 
+                   "<i>L. floridana</i>")
+  )
+
+# Create the plot with your desired styling
+ggplot(combined, aes(x = leaf_consumed, y = Caterpillar.Mass.Change, 
+                     color = treatment, fill = treatment)) +
+  # Points
+  geom_point(size = 2.5, alpha = 0.8) +
+  # Regression line with confidence band
+  geom_smooth(method = "lm", se = TRUE, alpha = 0.1, linewidth = 1) +
+  # Facet by plant species
+  facet_wrap(~ group, ncol = 2) +
+  # Labels
+  xlab("Leaf material consumed (pixels)") +
+  ylab("Change in caterpillar mass (g)") +
+  # Apply Tufte theme with customizations
+  theme_tufte(18) +
+  theme(
+    legend.position = "right",
+    legend.title = element_blank(),
+    # Use element_markdown to parse HTML tags
+    strip.text = element_markdown(size = 14),
+    legend.text = element_markdown(size = 12),
+    strip.background = element_blank(),
+    panel.spacing = unit(1.5, "lines")  # Add space between facets
+  ) +
+  # Color scales (matching your previous colors)
+  scale_fill_manual(
+    values = c(
+      "<i>A. altissima</i> absent" = "darkmagenta",
+      "<i>A. altissima</i> present" = "orchid",
+      "<i>L. floridana</i> absent" = "darkgreen",
+      "<i>L. floridana</i> present" = "olivedrab2"
+    )
+  ) +
+  scale_color_manual(
+    values = c(
+      "<i>A. altissima</i> absent" = "darkmagenta",
+      "<i>A. altissima</i> present" = "orchid",
+      "<i>L. floridana</i> absent" = "darkgreen",
+      "<i>L. floridana</i> present" = "olivedrab2"
+    )
+  )
+
+ggsave("olivia/caterpillar_leaf.png")
+
+
+# # OPTION 2: Facet by treatment (4 separate panels)
+# ggplot(combined, aes(x = leaf_consumed, y = Caterpillar.Mass.Change)) +
+#   geom_point(size = 2, alpha = 0.7) +
+#   geom_smooth(method = "lm", se = TRUE, color = "blue", alpha = 0.2) +
+#   facet_wrap(~ treatment_clean, ncol = 2) +
+#   labs(
+#     x = "Leaf material consumed (g)",
+#     y = "Change in caterpillar mass (g)",
+#     title = "Caterpillar mass change vs. leaf consumption by Treatment"
+#   ) +
+#   theme_minimal()
 
 
 ## extra code

@@ -155,10 +155,10 @@ create_boxplot <- function(data, y_var, y_label) {
 }
 
 # Create individual plots WITHOUT titles
-flavonoids_plot <- create_boxplot(all_data, Flavonoids, "Relative Flavonoids")
-phenolics_plot <- create_boxplot(all_data, Phenolics, "Relative Phenolics")
-tannins_plot <- create_boxplot(all_data, Tannins, "Relative Tannins")
-terpenoids_plot <- create_boxplot(all_data, Terpenoids, "Relative Terpenoids")
+flavonoids_plot <- create_boxplot(all_data, Flavonoids, "Relative [Flavonoids]")
+phenolics_plot <- create_boxplot(all_data, Phenolics, "Relative [Phenolics]")
+tannins_plot <- create_boxplot(all_data, Tannins, "Relative [Tannins]")
+terpenoids_plot <- create_boxplot(all_data, Terpenoids, "Relative [Terpenoids]")
 
 # OPTION 1: 2x2 grid
 grid_4 <- (flavonoids_plot | phenolics_plot) / 
