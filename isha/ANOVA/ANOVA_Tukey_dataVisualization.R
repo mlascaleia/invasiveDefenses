@@ -248,7 +248,7 @@ create_four_plot_grid <- function(master_whole, master_leaf, whole_tukey, leaf_t
   plot2 <- create_boxplot(
     data = master_whole,
     y_var = Tannins,
-    y_label = "Relative Tannins",
+    y_label = "[Relative Tannins]",
     file_suffix = NULL,
     tukey_data = whole_tukey,
     plot_label = "B"
