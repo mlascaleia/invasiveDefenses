@@ -45,6 +45,95 @@ nmds_result <- metaMDS(selected_data,
 # stress value
 nmds_result$stress
 
+# michael trying a few other NMDS things
+
+# run NMDS
+nmds_result2 <- metaMDS(selected_data, 
+                       distance = "bray",  # or "jaccard" for presence/absence
+                       k = 3,             # number of dimensions
+                       try = 20,          # number of random starts
+                       trymax = 100,       # maximum number of iterations
+                       autotransform = TRUE)  # automatic data transformation
+
+# stress value
+nmds_result2$stress
+
+
+# try PCA ####
+
+# drop categorical variable(s)
+pca_data <- selected_data %>%
+  select(-GrowthForm)
+
+# run PCA on scaled correlation matrix
+pca_result <- prcomp(pca_data, center = TRUE, scale = TRUE)
+summary(pca_result)
+screeplot(pca_result, type = "lines", main = "Scree Plot")
+
+
+# put back in species info
+pca_result
+
+# loadings (variable contributions to each PC)
+pca_result$rotation
+
+# scores (sample positions in PC space)
+pca_result$x
+pca_scores <- as.data.frame(pca_result$x)
+pca_scores$Species.Name <- my_data$Species.Name
+pca_scores$Type <- grouping_var
+
+# make pca plot ####
+
+# extract loadings for biplot arrows
+pca_loadings <- as.data.frame(pca_result$rotation[, 1:2])
+pca_loadings$Variable <- rownames(pca_loadings)
+
+# scale loadings for visual clarity (adjust multiplier as needed)
+loading_scale <- 3
+
+# variance explained for axis labels
+var_explained <- summary(pca_result)$importance[2, 1:2] * 100
+
+ggplot() +
+  # sample points, colored by Type
+  geom_point(data = pca_scores,
+             aes(x = PC1, y = PC2, color = Type),
+             size = 3, alpha = 0.8) +
+  # species name labels
+  geom_text(data = pca_scores,
+            aes(x = PC1, y = PC2, label = Species.Name, color = Type),
+            size = 2.8, vjust = -0.8, hjust = 0.5, show.legend = FALSE) +
+  # loading arrows
+  geom_segment(data = pca_loadings,
+               aes(x = 0, y = 0,
+                   xend = PC1 * loading_scale,
+                   yend = PC2 * loading_scale),
+               arrow = arrow(length = unit(0.2, "cm"), type = "closed"),
+               color = "gray40", linewidth = 0.5, alpha = 0.7) +
+  # loading labels
+  geom_text(data = pca_loadings,
+            aes(x = PC1 * loading_scale * 1.15,
+                y = PC2 * loading_scale * 1.15,
+                label = Variable),
+            size = 2.5, color = "gray30") +
+  # axis labels with variance explained
+  labs(x = paste0("PC1 (", round(var_explained[1], 1), "%)"),
+       y = paste0("PC2 (", round(var_explained[2], 1), "%)"),
+       color = "Type") +
+  # origin crosshairs
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray70", linewidth = 0.4) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray70", linewidth = 0.4) +
+  theme_classic() +
+  theme(legend.position = "right",
+        axis.title = element_text(size = 11),
+        axis.text = element_text(size = 9),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 9))
+
+
+
+# make plot ####
 
 env_vectors <- envfit(nmds_result, selected_data, permutations = 999, na.rm = TRUE)
 

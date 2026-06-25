@@ -92,10 +92,17 @@ detailed_results <- list()
 
 leaf_columns_to_analyze <- c("Toughness..N.", "Thickness..mm.")
 
+#### mcl added in to eliminate pseudoreplication ####
+
+leaf_data_sum <- leaf_data %>%
+  group_by(Species.Name, Type) %>%
+  summarise(Toughness..N. = mean(Toughness..N.),
+            Thickness..mm. = mean(Thickness..mm.))
+
 for (col in leaf_columns_to_analyze) {
   formula <- as.formula(paste(col, "~ Type"))
   
-  anova_model <- aov(formula, data = leaf_data)
+  anova_model <- aov(formula, data = leaf_data_sum)
   anova_results[[col]] <- anova_model
 
   anova_tidy <- broom::tidy(anova_model)
