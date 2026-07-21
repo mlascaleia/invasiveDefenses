@@ -2,147 +2,111 @@
 # and organize nicely onto a master datasheet for each
 # and then create box plots that show the signifcance letters from the tukey tests
 
-# clear environment
+# Clear environment
 rm(list = ls())
 
-# load libraries
-library(broom)
-library(agricolae)
-library(dplyr)
-library(tidyverse)
-library(ggplot2)
-library(ggthemes)
-library(patchwork)
-
-# ANOVA and Tukey Tests ----
-
-## Whole plant traits ----
-
+# Read data
 plant_data <- read.csv("isha/Harvard Master.csv", header = TRUE)
-anova_results <- list()
-tukey_results <- list()
-detailed_results <- list()
 
-columns_to_analyze <- c("Plant.height..ft.", "Nitrogen.content",
-                        "C.N.ratio", "Flavonoids", "Phenolics", 
-                        "Terpenoids", "Tannins", "Average.water.content....", "SLA..mm2.mg.")
+# Create binary variable: 1 = Invasive, 0 = Non-invasive (native + non-invasive exotic)
+plant_data$isInvasive <- ifelse(plant_data$Type == "Invasive", 1, 0)
 
-alpha_level <- 0.05
+# List of traits to analyze
+traits <- c("Plant.height..ft.", "Nitrogen.content", "C.N.ratio", 
+            "Flavonoids", "Phenolics", "Terpenoids", "Tannins", 
+            "Average.water.content....", "SLA..mm2.mg.")
 
-for (col in columns_to_analyze) {
-  formula <- as.formula(paste(col, "~ Type"))
+# Create empty dataframe for results
+results <- data.frame()
 
-  anova_model <- aov(formula, data = plant_data)
-  anova_results[[col]] <- anova_model
-
-  anova_tidy <- broom::tidy(anova_model)
-  anova_tidy$eta_sq <- anova_tidy$sumsq / sum(anova_tidy$sumsq)
-  anova_tidy$Variable <- col  # Add variable name to each result
-  detailed_results[[col]] <- anova_tidy
-
-  p_value <- anova_tidy$p.value[anova_tidy$term == "Type"]
+# Run t-tests
+for (trait in traits) {
+  # T-test using binary variable
+  test <- t.test(plant_data[[trait]] ~ plant_data$isInvasive)
   
-  if (!is.na(p_value) && p_value < alpha_level) {
-    tukey <- HSD.test(anova_model, "Type", group = TRUE, console = FALSE)
-    
-    tukey_groups <- data.frame(
-      Variable = col,
-      Type = rownames(tukey$groups),
-      Mean = tukey$groups[, 1],
-      Groups = tukey$groups[, 2],
-      stringsAsFactors = FALSE
-    )
-    tukey_results[[col]] <- tukey_groups
-    
-  } else {
-    tukey_results[[col]] <- data.frame(
-      Variable = col,
-      Type = NA,
-      Mean = NA,
-      Groups = NA,
-      Note = ifelse(is.na(p_value), "Error in ANOVA", "Not significant (p > 0.05)"),
-      stringsAsFactors = FALSE
-    )
-  }
+  # Get means
+  means <- tapply(plant_data[[trait]], plant_data$isInvasive, mean, na.rm = TRUE)
+  
+  # Store results
+  results <- rbind(results, data.frame(
+    Trait = trait,
+    Mean_Invasive = means["1"],
+    Mean_NonInvasive = means["0"],
+    Mean_Difference = means["1"] - means["0"],
+    t_statistic = test$statistic,
+    df = test$parameter,
+    p_value = test$p.value,
+    Significant = ifelse(test$p.value < 0.05, "Yes", "No")
+  ))
 }
 
+# View results
+print(results)
 
-plant_data2 <- plant_data %>%
-  mutate(isInv = ifelse(Type == "Invasive", 1, 0))
+# Save results
+write.csv(results, "isha/T-Tests/t_test_whole_results.csv", row.names = FALSE)
 
+# Show only significant results
+print("Significant results (p < 0.05):")
+print(results[results$Significant == "Yes", ])
 
-summary(lm(Plant.height..ft. ~ isInv, data = plant_data2))
-
-detailed_combined <- bind_rows(detailed_results)
-
-tukey_combined <- bind_rows(tukey_results) %>%
-  arrange(Variable, Type)
-
-write.csv(detailed_combined, "isha/ANOVA/whole_plant_anova_results.csv", row.names = FALSE)
-write.csv(tukey_combined, "isha/ANOVA/whole_plant_tukey_results.csv", row.names = FALSE)
-
-
-## Leaf traits ----
+# Leaf traits ----
 
 leaf_data <- read.csv("isha/Harvard MasterLeaf.csv", header = TRUE)
 
-anova_results <- list()
-tukey_results <- list()
-detailed_results <- list()
+# Create binary variable: 1 = Invasive, 0 = Non-invasive (native + non-invasive exotic)
+leaf_data$isInvasive <- ifelse(leaf_data$Type == "Invasive", 1, 0)
 
-leaf_columns_to_analyze <- c("Toughness..N.", "Thickness..mm.")
-
-#### mcl added in to eliminate pseudoreplication ####
-
+#### Eliminate pseudoreplication by averaging per species ####
 leaf_data_sum <- leaf_data %>%
-  group_by(Species.Name, Type) %>%
-  summarise(Toughness..N. = mean(Toughness..N.),
-            Thickness..mm. = mean(Thickness..mm.))
+  group_by(Species.Name, Type, isInvasive) %>%
+  summarise(
+    Toughness..N. = mean(Toughness..N., na.rm = TRUE),
+    Thickness..mm. = mean(Thickness..mm., na.rm = TRUE)
+  )
 
-for (col in leaf_columns_to_analyze) {
-  formula <- as.formula(paste(col, "~ Type"))
-  
-  anova_model <- aov(formula, data = leaf_data_sum)
-  anova_results[[col]] <- anova_model
+# Traits to analyze
+leaf_traits <- c("Toughness..N.", "Thickness..mm.")
 
-  anova_tidy <- broom::tidy(anova_model)
-  anova_tidy$eta_sq <- anova_tidy$sumsq / sum(anova_tidy$sumsq)
-  anova_tidy$Variable <- col
-  detailed_results[[col]] <- anova_tidy
+# Create empty dataframe for results
+results <- data.frame()
+
+# Run t-tests using the averaged data
+for (trait in leaf_traits) {
+  # T-test using binary variable
+  test <- t.test(leaf_data_sum[[trait]] ~ leaf_data_sum$isInvasive)
   
-  p_value <- anova_tidy$p.value[anova_tidy$term == "Type"]
+  # Get means
+  means <- tapply(leaf_data_sum[[trait]], leaf_data_sum$isInvasive, mean, na.rm = TRUE)
   
-  if (!is.na(p_value) && p_value < alpha_level) {
-    tukey <- HSD.test(anova_model, "Type", group = TRUE, console = FALSE)
-    
-    tukey_groups <- data.frame(
-      Variable = col,
-      Type = rownames(tukey$groups),
-      Mean = tukey$groups[, 1],
-      Groups = tukey$groups[, 2],
-      stringsAsFactors = FALSE
-    )
-    tukey_results[[col]] <- tukey_groups
-    
-  } else {
-    tukey_results[[col]] <- data.frame(
-      Variable = col,
-      Type = NA,
-      Mean = NA,
-      Groups = NA,
-      Note = ifelse(is.na(p_value), "Error in ANOVA", "Not significant (p > 0.05)"),
-      stringsAsFactors = FALSE
-    )
-  }
+  # Store results
+  results <- rbind(results, data.frame(
+    Trait = trait,
+    Mean_Invasive = means["1"],
+    Mean_NonInvasive = means["0"],
+    Mean_Difference = means["1"] - means["0"],
+    t_statistic = test$statistic,
+    df = test$parameter,
+    p_value = test$p.value,
+    Significant = ifelse(test$p.value < 0.05, "Yes", "No")
+  ))
 }
 
-detailed_combined <- bind_rows(detailed_results)
+# View results
+print(results)
 
-tukey_combined <- bind_rows(tukey_results) %>%
-  arrange(Variable, Type)
+# Save results (directly in isha folder, not in subfolder)
+write.csv(results, "isha/T-Tests/t_test_leaf_results.csv", row.names = FALSE)
 
-write.csv(detailed_combined, "isha/ANOVA/leaf_anova_results.csv", row.names = FALSE)
-write.csv(tukey_combined, "isha/ANOVA/leaf_tukey_results.csv", row.names = FALSE)
+# Show only significant results
+print("Significant results (p < 0.05):")
+print(results[results$Significant == "Yes", ])
+
+
+
+
+
+
 
 
 
