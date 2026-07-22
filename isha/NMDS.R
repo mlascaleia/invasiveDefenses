@@ -113,20 +113,31 @@ legend(x = "topright",
 
 dev.off()
 
-# Clear environment
+
+
+# two group nmds attempt by isha --------
+
+# clear environment
 rm(list = ls())
 
-# Load packages
+# load packages
 library(dplyr)
 library(vegan)
 library(ggplot2)
+library(ggfortify)
 
-# Read data
 master <- read.csv("isha/Harvard Master.csv")
+
 my_data <- read.csv("isha/NMDS data.csv", header = TRUE, row.names = 2)
 my_data <- merge(master, my_data, all.x = TRUE)
 
-# Prepare data
+# Create a new grouping variable with 2 groups
+my_data$Group <- ifelse(my_data$Type == "Invasive", "Invasive", "Non-invasive")
+
+# Convert to factor
+grouping_var_2 <- as.factor(my_data$Group)
+
+# Prepare selected data
 selected_data <- my_data %>%
   mutate(Growth.Form = as.numeric(as.factor(my_data$Growth.Form))) %>%
   select(
@@ -144,57 +155,84 @@ selected_data <- my_data %>%
     SpecificLeafArea = SLA..mm2.mg.
   )
 
-grouping_var <- my_data$Type
+# run NMDS
+nmds_result <- metaMDS(selected_data, 
+                       distance = "bray",  # or "jaccard" for presence/absence
+                       k = 2,             # number of dimensions
+                       try = 20,          # number of random starts
+                       trymax = 100,       # maximum number of iterations
+                       autotransform = TRUE)  # automatic data transformation
 
-# Define groupings to test
-groupings <- list(
-  "All 3 groups" = grouping_var,
-  "Invasive vs (NIE+Native)" = ifelse(grouping_var == "Invasive", "Invasive", "Non-invasive"),
-  "NIE vs (Native+Invasive)" = ifelse(grouping_var == "Non-invasive exotic", "NIE", "Others"),
-  "Native vs (Invasive+NIE)" = ifelse(grouping_var == "Native", "Native", "Others")
+# stress value
+nmds_result$stress
+
+# Try with k=3
+nmds_result2 <- metaMDS(selected_data, 
+                        distance = "bray",  # or "jaccard" for presence/absence
+                        k = 3,             # number of dimensions
+                        try = 20,          # number of random starts
+                        trymax = 100,       # maximum number of iterations
+                        autotransform = TRUE)  # automatic data transformation
+
+# stress value
+nmds_result2$stress
+
+# make plot ####
+env_vectors <- envfit(nmds_result, selected_data, permutations = 999, na.rm = TRUE)
+
+# Update colors and shapes for 2 groups
+my_point_colors <- c("olivedrab4", "gold")  # Invasive, Non-invasive
+my_ellipse_colors <- c("olivedrab3", "lemonchiffon")  # Invasive, Non-invasive
+my_point_shapes <- c(16, 17)  # Different shapes for each group
+
+png("isha/Plots/NMDS_plot_2groups.png", 
+    width = 10, 
+    height = 6, 
+    units = "in", 
+    res = 300,
+    bg = "transparent")  
+
+par(family = "serif", bg = NA)
+plot(nmds_result, type = "n", main = "NMDS Plot: Invasive vs Non-Invasive Species", bg = NA)
+
+points(nmds_result, display = "sites", 
+       pch = my_point_shapes[as.numeric(grouping_var_2)],
+       col = my_point_colors[as.numeric(grouping_var_2)],
+       cex = 1.5)
+
+# add ellipses
+ordiellipse(
+  nmds_result,
+  groups = grouping_var_2,
+  kind = "sd",
+  draw = "polygon",
+  col = my_ellipse_colors,
+  border = "black",       
+  lwd = 1,              
+  alpha = 100             
 )
 
-# Run PERMANOVA for each grouping
-results <- data.frame()
+# add environmental vectors
+plot(env_vectors, col = "black", lwd = 2, cex = 0.7)
 
-for (i in 1:length(groupings)) {
-  group_name <- names(groupings)[i]
-  group_vector <- groupings[[i]]
-  
-  # Run PERMANOVA
-  result <- adonis2(selected_data ~ group_vector, method = "bray")
-  
-  # Store results
-  results <- rbind(results, data.frame(
-    Grouping = group_name,
-    R2 = result$R2[1],
-    P_value = result$`Pr(>F)`[1]
-  ))
-}
+# add legend
+legend(x = "topright",
+       legend = levels(grouping_var_2),
+       pch = my_point_shapes[1:length(levels(grouping_var_2))],
+       col = my_point_colors[1:length(levels(grouping_var_2))],
+       pt.bg = my_point_colors[1:length(levels(grouping_var_2))],
+       title = "Species Type",
+       xpd = TRUE
+)
 
-# Print results
-print(results)
+dev.off()
 
-# Find best (highest R2)
-best <- results[which.max(results$R2), ]
-cat("\nBest grouping:", best$Grouping, "with R2 =", round(best$R2, 4))
+# Optional: Add statistical test to see if groups are significantly different
+# Permutation test for differences between groups
+adonis_result <- adonis2(selected_data ~ Group, data = my_data, method = "bray", permutations = 999)
+print(adonis_result)
 
-# Save
-write.csv(results, "isha/permanova_results.csv", row.names = FALSE)
 
-# Simple plot
-p <- ggplot(results, aes(x = Grouping, y = R2, fill = Grouping)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = round(R2, 4)), vjust = -0.5) +
-  labs(title = "PERMANOVA Results") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none")
-
-dir.create("isha/Plots", showWarnings = FALSE)
-ggsave("isha/Plots/permanova_results.png", p, width = 8, height = 5)
-
-cat("\nDone!")
 
 
 
