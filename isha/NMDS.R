@@ -155,6 +155,35 @@ selected_data <- my_data %>%
     SpecificLeafArea = SLA..mm2.mg.
   )
 
+# re-pasting grouped nmds attempt
+grouping_var <- my_data$Type
+
+groupings <- list(
+  "All 3 groups" = grouping_var,
+  "Invasive vs (NIE+Native)" = ifelse(grouping_var == "Invasive", "Invasive", "Non-invasive"),
+  "NIE vs (Native+Invasive)" = ifelse(grouping_var == "Non-invasive exotic", "NIE", "Others"),
+  "Native vs (Invasive+NIE)" = ifelse(grouping_var == "Native", "Native", "Others"))
+
+results <- data.frame()
+
+for (i in 1:length(groupings)) {
+  
+  group_name <- names(groupings)[i]
+  group_vector <- groupings[[i]]
+  
+  # Run PERMANOVA
+  result <- adonis2(selected_data ~ group_vector, method = "bray")
+  
+  # Store results
+  results <- rbind(results, data.frame(
+    Grouping = group_name,
+    R2 = result$R2[1],
+    P_value = result$`Pr(>F)`[1]
+  ))
+}
+
+results
+
 # run NMDS
 nmds_result <- metaMDS(selected_data, 
                        distance = "bray",  # or "jaccard" for presence/absence
