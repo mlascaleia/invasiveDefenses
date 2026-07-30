@@ -53,6 +53,7 @@ summary(m3)
 
 m4 <- glm(slope ~ trichomes*species, data = dif2)
 summary(m4)
+
 null <- lm(slope ~ 1, data = dif2)
 
 #AIC Test
