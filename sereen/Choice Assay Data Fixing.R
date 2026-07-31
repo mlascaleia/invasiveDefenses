@@ -17,7 +17,7 @@ diffs(comparison)
 
 final <- d1
 
-final$Y.Eaten[final$matchupNo == 47] <- d1$Y.Eaten[d1$matchupNo == 47] # d1 is correct (this line is redundant)
+# final$Y.Eaten[final$matchupNo == 47] <- d1$Y.Eaten[d1$matchupNo == 47] # d1 is correct (this line is redundant)
 final$Notes[final$matchupNo == 45] <- d2$Notes[d2$matchupNo == 45] # d2 is correct
 final$Notes[final$matchupNo == 67] <- d2$Notes[d2$matchupNo == 67] #d2 is correct
 final$Notes[final$matchupNo == 85] <- d2$Notes[d2$matchupNo == 85] #d2 is correct
@@ -28,8 +28,10 @@ final$Notes[final$matchupNo == 115] <- d1$Notes[d1$matchupNo == 115] #d1 is corr
 final$Notes[final$matchupNo == 116] <- d1$Notes[d1$matchupNo == 116] #d1 is correct
 
 # now fix the single known error
-final$yellow[final$matchupNo == 67] <- "B. amurensis"
+final$green[final$matchupNo == 61] <- "B. amurensis"
 
+# write the completed datasheet
+write.csv(final, "sereen/matchups1.csv", row.names = F)
 
 
 
