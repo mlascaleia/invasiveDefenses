@@ -26,7 +26,7 @@ matchupNo,yellow,green,Y.Eaten,G.Eaten,Notes
 144,B. thunbergii,M. bealii,95,0,
 145,B. koreana,B. thibetia,15,70,
 146,B. aggregata,B. poiretti,0,30,
-147,B. thunbergii,B. francisci-ferdinandi,,,Re-do x2
+147,B. thunbergii,B. francisci-ferdinandi,40,5,Re-do x2
 148,B. gilgiana,B. ottawensis,60,5,
 149,B. polyantha,B. virescens,50,40,
 150,M. aquifolium,B. polyantha,0,80,
@@ -50,18 +50,18 @@ matchupNo,yellow,green,Y.Eaten,G.Eaten,Notes
 168,B. candidula,B. gilgiana,0,40,
 169,B. asiatica,B. gilgiana,0,30,
 170,B. canadensis,B. aggregata,50,0,
-171,B. brachypoda,B. virgetorum,50,20,Re-do
-172,B. amurensis,B. poiretti,40,5,
-173,B. amurensis,B. virescens,60,30,
-174,M. bealii,B. gilgiana,0,95,
-175,B. asiatica,B. brachypoda,,,Re-do x2
+171,B. brachypoda,B. virgetorum,80,5,"Re-do x2, CAT"
+172,B. amurensis,B. poiretti,50,20,
+173,B. amurensis,B. virescens,40,5,
+174,M. bealii,B. gilgiana,60,30,
+175,B. asiatica,B. brachypoda,0,95,Re-do
 176,B. canadensis,B. quelpaertensis,15,75,
 177,B. polyantha,B. thibetia,15,80,
 178,B. crataengia,B. vulgaris,30,0,
 179,B. thunbergii,B. dielsiana,10,65,
 180,M. bealii,B. aggregata,0,100,
 181,B. aggregata,B. candidula,30,10,
-182,B. francisci-ferdinandi,B. polyantha,,,?
+182,B. francisci-ferdinandi,B. polyantha,NA,NA,?
 183,B. gilgiana,B. poiretti,0,70,
 184,B. candidula,B. thibetia,0,60,
 185,B. dielsiana,B. virgetorum,80,7,
@@ -70,7 +70,7 @@ matchupNo,yellow,green,Y.Eaten,G.Eaten,Notes
 188,B. asiatica,B. virgetorum,40,15,
 189,B. julenii,B. asiatica,0,97,
 190,B. ottawensis,B. polyantha,10,25,
-191,B. canadensis,B. crataengia,,,Re-do x2
+191,B. canadensis,B. crataengia,15,50,Re-do x2
 192,M. bealii,B. virescens,0,40,
 193,M. bealii,B. lecomptei,0,50,
 194,B. dielsiana,M. japonica,60,0,
