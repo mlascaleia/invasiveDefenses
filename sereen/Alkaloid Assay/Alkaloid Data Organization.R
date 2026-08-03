@@ -9,7 +9,7 @@ library(readr)
 #Import Alkaloid Notes
 
 # Get a list of all CSV file paths in the folder
-file_paths <- list.files(path = "C:/Users/Sereen/Documents/invasiveDefenses/sereen/Alkaloid Assay/Spec Data/", 
+file_paths <- list.files(path = "sereen/Alkaloid Assay/Spec Data/", 
                          pattern = "*.csv", full.names = TRUE)
 
 
@@ -57,6 +57,8 @@ native_mean <- mean(native_sub_df$absorbance_dilution_drymass)
 
 
 combined_df <- rbind(invasive_sub_df, nie_sub_df, native_sub_df)
+
+save(combined_df, file = "sereen/Alkaloid Assay/alkaloidassay.rdata")
 
 model <- lm(absorbance_dilution_drymass ~ as.factor(INV), data = combined_df)
 summary(model)

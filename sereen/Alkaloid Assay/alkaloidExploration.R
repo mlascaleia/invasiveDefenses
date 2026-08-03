@@ -127,7 +127,7 @@ wide_rel <- results %>%
   select(Binomial, compound, rel) %>%
   tidyr::pivot_wider(names_from = compound, values_from = rel)
 
-write.csv(wide_rel, "sereen/Alkaloid Assay/lcmsResults_rel.csv", row.names = FALSE)
+write.csv(wide_rel, "sereen/Alkaloid Assay/lcmsResults.csv", row.names = FALSE)
 
 # ---- PCA on normalised, logged values ---------------------------------
 alk <- wide_rel %>%

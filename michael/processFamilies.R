@@ -30,27 +30,27 @@ berb <- process_names(b_mat)
 nmds_explore(b_mat, berb)
 
 
-a_mat <- adoxaceae$defensive_compounds %>%
-  select(starts_with("datafile")) %>%
-  as.matrix() %>%
-  t()
-
-a_mat[is.na(a_mat)] <- 0
-
-adox <- process_names(a_mat)
-
-nmds_explore(a_mat, adox)
-
-c_mat <- caprifoliaceae$defensive_compounds %>%
-  select(starts_with("datafile")) %>%
-  as.matrix() %>%
-  t()
-
-c_mat[is.na(c_mat)] <- 0
-
-capr <- process_names(c_mat)
-
-nmds_explore(c_mat, capr)
+# a_mat <- adoxaceae$defensive_compounds %>%
+#   select(starts_with("datafile")) %>%
+#   as.matrix() %>%
+#   t()
+# 
+# a_mat[is.na(a_mat)] <- 0
+# 
+# adox <- process_names(a_mat)
+# 
+# nmds_explore(a_mat, adox)
+# 
+# c_mat <- caprifoliaceae$defensive_compounds %>%
+#   select(starts_with("datafile")) %>%
+#   as.matrix() %>%
+#   t()
+# 
+# c_mat[is.na(c_mat)] <- 0
+# 
+# capr <- process_names(c_mat)
+# 
+# nmds_explore(c_mat, capr)
 
 diss <- as.matrix(dist(b_mat))
 
@@ -72,16 +72,26 @@ alkaloid_area_by_sample <- berberidaceae$all_compounds %>%
   summarise(across(everything(), sum)) %>%
   pivot_longer(everything(), names_to = "raw_name", values_to = "total_alkaloid_area")
 
+getProp <- berberidaceae$all_compounds %>%
+  select(all_of(area_cols)) %>%
+  mutate(across(everything(), ~replace_na(., 0))) %>%
+  summarise(across(everything(), sum)) %>%
+  pivot_longer(everything(), names_to = "raw_name", values_to = "total_metabolite_area") %>%
+  left_join(alkaloid_area_by_sample) %>%
+  mutate(alkaloidProp = total_alkaloid_area/total_metabolite_area)
+
 # Use process_names to attach species metadata
 # process_names expects a matrix with rownames as the datafile strings
 dummy_mat <- matrix(0, nrow = length(area_cols), ncol = 1)
 rownames(dummy_mat) <- area_cols
 labs <- process_names(dummy_mat)
 
-alkaloid_area_by_sample <- alkaloid_area_by_sample %>%
+alkData <- getProp %>%
   left_join(labs, by = "raw_name") %>%
-  select(Binomial, Provenance, total_alkaloid_area) %>%
-  arrange(desc(total_alkaloid_area))
+  select(Binomial, Provenance, total_alkaloid_area,  alkaloidProp) %>%
+  arrange(desc(alkaloidProp))
+
+save(alkData, file = "sereen/Alkaloid Assay/lcmsresults2.rdata") 
 
 aa <- alkaloid_area_by_sample %>%
   arrange(total_alkaloid_area)

@@ -56,36 +56,89 @@ long <- bind_rows(
 # 
 # summary(fit)
 
-# trying with ordbeta
-library(ordbetareg)
-fit2 <- ordbetareg(
-  eaten ~ 0 + species + (1 | trial),
-  data = long,
-  coef_prior_mean = 1.5,
-  coef_prior_SD = 1,
-  chains = 4, cores = 4, iter = 6000, seed = 42,
-  control = list(adapt_delta = 0.95)
+# # trying with ordbeta
+# library(ordbetareg)
+# fit2 <- ordbetareg(
+#   eaten ~ 0 + species + (1 | trial),
+#   data = long,
+#   coef_prior_mean = 1.5,
+#   coef_prior_SD = 1,
+#   chains = 4, cores = 4, iter = 6000, seed = 42,
+#   control = list(adapt_delta = 0.95)
+# )
+# 
+# summary(fit2)
+# save(fit2, file = "sereen/Choice Assay/choiceModel.rdata")
+# load("sereen/Choice Assay/choiceModel.rdata")
+
+# # extract the ranking
+# 
+# ab <- as.data.frame(fixef(fit2))
+# ab$term <- rownames(ab)
+# ab <- ab %>%
+#   filter(grepl("^species", term)) %>%
+#   mutate(species  = sub("^species", "", term),
+#          Estimate = Estimate - mean(Estimate)) %>%
+#   arrange(desc(Estimate)) %>% 
+#   select(species, Estimate, Est.Error, Q2.5, Q97.5)
+# ab
+# 
+# ggplot(ab, aes(x = reorder(species, Estimate), y = Estimate)) +
+#   geom_pointrange(aes(ymax = Estimate + 1.96 * Est.Error, 
+#                       ymin = Estimate - 1.96 * Est.Error)) +
+#   theme_minimal() +
+#   # theme(axis.text.x = element_text(angle = 90, vjust = .4)) +
+#   coord_flip ()
+# save(ab, file = "sereen/Choice Assay/choiceResults.rdata")
+load("sereen/Choice Assay/choiceResults.rdata")
+# bring it all together
+rm(d,e,f,g,long)
+library(fuzzyjoin)
+
+load("sereen/Alkaloid Assay/alkaloidassay.rdata")
+load("sereen/Alkaloid Assay/lcmsresults2.rdata")
+
+alkData$Binomial <- str_replace(alkData$Binomial, "erberis", ".")
+alkData$Binomial <- str_replace(alkData$Binomial, "ahonia", ".")
+
+together <- stringdist_left_join(
+  combined_df, alkData,
+  by = c("Species" = "Binomial"),
+  method = "lv", max_dist = 2,
+  distance_col = "dist"
+) %>%
+  mutate(alk_lcms = scale(together$total_alkaloid_area, center = F)) %>%
+  mutate(cl = Cloudy > 0)
+
+summary(lm(absorbance_dilution_drymass ~ alk_lcms + cl, data = together))
+
+newTog <- together %>%
+  mutate(adm = ifelse(cl == T, absorbance_dilution_drymass - 0.06319, absorbance_dilution_drymass))
+
+summary(lm(adm ~ alk_lcms, data = newTog))
+
+allTog <- stringdist_left_join(
+  newTog, ab,
+  by = c("Species" = "species"),
+  method = "lv", max_dist = 3,
+  distance_col = "dist"
 )
 
-summary(fit2)
+# neaten that nasty thing up....
+allTog <- allTog %>%
+  select(Species, adm, 
+         tasty = Estimate,
+         invasive = INV)
 
-# extract the ranking
+plot(allTog$adm, allTog$tasty)
+summary(lm(tasty ~ poly(adm, 2), data = allTog))
 
-ab <- as.data.frame(fixef(fit2))
-ab$term <- rownames(ab)
-ab <- ab %>%
-  filter(grepl("^species", term)) %>%
-  mutate(species  = sub("^species", "", term),
-         Estimate = Estimate - mean(Estimate)) %>%
-  arrange(desc(Estimate)) %>% 
-  select(species, Estimate, Est.Error, Q2.5, Q97.5)
-ab
+allTog <- allTog %>%
+  mutate(invades = ifelse(invasive == "Native", "Non-Invasive Exotic", invasive))
 
-ggplot(ab, aes(x = reorder(species, Estimate), y = Estimate)) +
-  geom_pointrange(aes(ymax = Estimate + 1.96 * Est.Error, 
-                      ymin = Estimate - 1.96 * Est.Error)) +
-  theme_minimal() +
-  # theme(axis.text.x = element_text(angle = 90, vjust = .4)) +
-  coord_flip ()
+summary(lm(tasty ~ invades*poly(adm,2), allTog))
+
+
+
 
 
