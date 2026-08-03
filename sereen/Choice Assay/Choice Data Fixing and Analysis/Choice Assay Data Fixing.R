@@ -6,9 +6,9 @@ library(tidyverse)
 library(arsenal)
 
 #Load data
-d1 <- read.csv("sereen/choiceAssayMatchups_Entered_1.csv") %>%
+d1 <- read.csv("sereen/Choice Assay/Choice Data/Raw Data/choiceAssayMatchups_Entered_1.csv") %>%
   arrange(matchupNo)
-d2 <- read.csv("sereen/choiceAssayMatchups_Entered_2.csv") %>%
+d2 <- read.csv("sereen/Choice Assay/Choice Data/Raw Data/choiceAssayMatchups_Entered_2.csv") %>%
   arrange(matchupNo)
 
 #Compare the 2 data frames
