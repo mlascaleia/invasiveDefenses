@@ -1,4 +1,6 @@
-Alkaloid_Notes <- read.csv("sereen/Alkaloid Notes.csv")
+
+Alkaloid_Notes <- read.csv("sereen/Alkaloid Assay/Alkaloid Notes.csv")
+
 library(tidyverse)
 library(dplyr)
 library(purrr)
@@ -7,7 +9,7 @@ library(readr)
 #Import Alkaloid Notes
 
 # Get a list of all CSV file paths in the folder
-file_paths <- list.files(path = "C:/Users/Sereen/Documents/invasiveDefenses/sereen/Spec Data", 
+file_paths <- list.files(path = "C:/Users/Sereen/Documents/invasiveDefenses/sereen/Alkaloid Assay/Spec Data/", 
                          pattern = "*.csv", full.names = TRUE)
 
 
@@ -66,8 +68,4 @@ boxplot(absorbance_dilution_drymass ~ INV, data = combined_df,
         col = c("lightblue", "lightgreen", "lightpink"))
 
 
-#Now, effect size of cloudiness on the data
-model <- lm(absorbance_dilution ~ Cloudy, data = merged_df)
-
-summary(model)
-
+####Now, effect size of cloudiness on the data????
