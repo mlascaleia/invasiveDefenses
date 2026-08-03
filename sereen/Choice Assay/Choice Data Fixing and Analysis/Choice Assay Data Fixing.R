@@ -30,8 +30,72 @@ final$Notes[final$matchupNo == 116] <- d1$Notes[d1$matchupNo == 116] #d1 is corr
 # now fix the single known error
 final$green[final$matchupNo == 61] <- "B. amurensis"
 
+#Omit invalid matchups
+final_corr <- final[-c(90, 103), ]
+final_clean <- na.omit(final_corr)
+
 # write the completed datasheet
-write.csv(final, "sereen/matchups1.csv", row.names = F)
+#write.csv(final_clean, "sereen/matchups1clean.csv", row.names = F)
+
+###Matchup 2
+#Load data
+d2.1 <- read.csv("sereen/Choice Assay/Choice Data/Raw Data/matchups2_dataentry1.csv") %>%
+  arrange(matchupNo)
+d2.2 <- read.csv("sereen/Choice Assay/Choice Data/Raw Data/matchups2_dataentry2.csv") %>%
+  arrange(matchupNo)
+
+#Compare the 2 data frames
+comparison <- comparedf(d2.1, d2.2, by="matchupNo")
+diffs(comparison)
+
+final2 <- d2.2
+
+#Omit invalid matchups
+final2_clean <- na.omit(final2)
+
+# write the completed datasheet
+#write.csv(final_clean, "sereen/matchups2clean.csv", row.names = F)
+
+
+###Matchup 3
+#Load data
+d3.1 <- read.csv("sereen/Choice Assay/Choice Data/Raw Data/matchups3_dataentry1.csv") %>%
+  arrange(matchupNo)
+d3.2 <- read.csv("sereen/Choice Assay/Choice Data/Raw Data/matchups3_dataentry2.csv") %>%
+  arrange(matchupNo)
+
+#Compare the 2 data frames
+comparison <- comparedf(d3.1, d3.2, by="matchupNo")
+diffs(comparison)
+
+final3 <- d3.2
+
+# final$Y.Eaten[final$matchupNo == 47] <- d1$Y.Eaten[d1$matchupNo == 47] # d1 is correct (this line is redundant)
+final3$G.Eaten[final3$matchupNo == 321] <- final3$G.Eaten[d3.1$matchupNo == 321] # d3.1 is correct
+
+#Omit invalid matchups
+final3_clean <- na.omit(final3)
+
+# write the completed datasheet
+#write.csv(final_clean, "sereen/matchups3clean.csv", row.names = F)
 
 
 
+###Matchup 4
+#Load data
+d4.1 <- read.csv("sereen/Choice Assay/Choice Data/Raw Data/matchups4_dataentry1.csv") %>%
+  arrange(matchupNo)
+d4.2 <- read.csv("sereen/Choice Assay/Choice Data/Raw Data/matchups4_dataentry2.csv") %>%
+  arrange(matchupNo)
+
+#Compare the 2 data frames
+comparison <- comparedf(d4.1, d4.2, by="matchupNo")
+diffs(comparison)
+
+final4 <- d4.1
+
+#Omit invalid matchups
+final4_clean <- na.omit(final4)
+
+# write the completed datasheet
+#write.csv(final_clean, "sereen/matchups4clean.csv", row.names = F)
