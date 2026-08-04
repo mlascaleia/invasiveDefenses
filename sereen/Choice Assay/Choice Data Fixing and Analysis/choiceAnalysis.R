@@ -3,7 +3,7 @@
 # initialize
 rm(list = ls())
 library(dplyr)
-library(brms)
+#library(brms)
 
 # load data
 
@@ -107,7 +107,7 @@ together <- stringdist_left_join(
   method = "lv", max_dist = 2,
   distance_col = "dist"
 ) %>%
-  mutate(alk_lcms = scale(together$total_alkaloid_area, center = F)) %>%
+  mutate(alk_lcms = scale(.$total_alkaloid_area, center = F)) %>%
   mutate(cl = Cloudy > 0)
 
 summary(lm(absorbance_dilution_drymass ~ alk_lcms + cl, data = together))
@@ -136,9 +136,176 @@ summary(lm(tasty ~ poly(adm, 2), data = allTog))
 allTog <- allTog %>%
   mutate(invades = ifelse(invasive == "Native", "Non-Invasive Exotic", invasive))
 
-summary(lm(tasty ~ invades*poly(adm,2), allTog))
+summary(lm(tasty ~ invades*adm, allTog))
+
+
+##Sereen's attempt to plot the data onto the model
+#Make plot with everything on it
+library(ggplot2)
+
+# 1. Fit the linear model
+lin_model <- lm(tasty ~ invades*adm, data = allTog)
+
+# 2. Plot the data points
+plot(allTog$adm, allTog$tasty, col = "blue", pch = 16, 
+     xlab = "Alkaloid Content", ylab = "Tastiness", main = "Tastiness By Alkaloid Content")
+
+# 3. Overlay the model line
+abline(lin_model, col = "red", lwd = 2)
+
+
+######Plot for invasives
+#Make a subset for invasives data points
+invasive <- subset(allTog, invades == "Invasive")
+
+#Plot the invasives data points
+plot(invasive$adm, invasive$tasty, pch = 16, col = "darkorchid1",
+     xlab = "Alkaloid Content", ylab = "Tastiness", main = "Tastiness By Alkaloid Content for Invasives")
+
+#Plot the model onto the invasives data points
+lines(invasive$adm, predict(lin_model, newdata = invasive), col = "darkorchid", lwd = 2)
+
+###NEED TO ADD ERROR!!!
+
+#Plot for non-invasives
+#Make a subset for non-invasives data points
+noninvasive <- subset(allTog, invades == "Non-Invasive Exotic")
+
+#Plot the model onto the non-invasives data points
+plot(noninvasive$adm, noninvasive$tasty, pch = 16, col = "green",
+     xlab = "Alkaloid Content", ylab = "Tastiness", main = "Tastiness By Alkaloid Content for Non-Invasives")
+
+#Plot the model onto the invasives data points
+lines(noninvasive$adm, predict(lin_model, newdata = noninvasive), col = "darkolivegreen", lwd = 2)
 
 
 
+library(ggplot2)
+library(dplyr)
+
+##Invasives plot in ggplot
+invasive$predicted_y <- predict(lin_model, newdata = invasive)
+
+ggplot(data=invasive) +
+  geom_point(data = invasive, aes(x = adm, y = tasty), color = "darkorchid", size = 3) +
+    geom_line(aes(x=adm, y = predicted_y),
+    color = "darkorchid2", linewidth = 1) +  labs(
+    title = "Preference by Alkaloid Content for Invasives",
+    x = "Alkaloid Content",
+    y = "Rheumaptera Preference"
+  )+
+  theme(
+  plot.title = element_text(hjust = 0.5),  # Centers the main title
+  axis.title.x = element_text(hjust = 0.5), # Centers the X-axis label
+  axis.title.y = element_text(hjust = 0.5)  # Centers the Y-Axis label
+  )
+
+#Invasive plot with error
+predictions <- predict(lin_model, newdata = invasive, se.fit = TRUE)
+invasive$predicted_y <- predictions$fit
+invasive$se_val <- predictions$se.fit
+
+# 2. Plot with manual error ribbon
+ggplot(data = invasive, aes(x = adm)) +
+  # Draw the error ribbon FIRST so it sits behind your points and line
+  geom_ribbon(aes(ymin = predicted_y - 1.96 * se_val, ymax = predicted_y + 1.96 * se_val), 
+              fill = "grey80", alpha = 0.5) + # 1.96 multiplier gives the 95% Confidence Interval
+  geom_point(aes(y = tasty), color = "darkorchid", size = 3) +
+  geom_line(aes(y = predicted_y), color = "darkorchid2", linewidth = 1) + 
+  labs(
+    title = "Preference by Alkaloid Content for Invasives",
+    x = "Alkaloid Content",
+    y = "Rheumaptera Preference"
+  ) +
+  theme_classic()+
+  theme(
+    plot.title = element_text(hjust = 0.5),   
+    axis.title.x = element_text(hjust = 0.5), 
+    axis.title.y = element_text(hjust = 0.5)  
+  )
+
+##Non-invasives plot in ggplot
+summary_noninv_data <- noninvasive %>%
+  group_by(Species) %>% 
+  summarize(
+    mean_val = mean(adm),
+    se_val = sd(adm) / sqrt(n()) # Calculating Standard Error
+  )
+
+se_val <- sd(noninvasive$adm) / sqrt(n()) # Calculating Standard Error
 
 
+noninvasive$predicted_y <- predict(lin_model, newdata = noninvasive)
+
+ggplot(data=noninvasive) +
+  geom_point(data = noninvasive, aes(x = adm, y = tasty), color = "green", size = 3) +
+  geom_line(aes(x=adm, y = predicted_y),
+            color = "darkolivegreen", linewidth = 1) +  labs(
+              title = "Preference by Alkaloid Content for Non-Invasives",
+              x = "Alkaloid Content",
+              y = "Rheumaptera Preference")+
+  theme(
+      plot.title = element_text(hjust = 0.5),  # Centers the main title
+      axis.title.x = element_text(hjust = 0.5), # Centers the X-axis label
+      axis.title.y = element_text(hjust = 0.5)  # Centers the Y-Axis label
+    )
+
+##Non-invasive graph with error
+# 1. Get predictions AND standard errors (se.fit)
+predictions <- predict(lin_model, newdata = noninvasive, se.fit = TRUE)
+noninvasive$predicted_y <- predictions$fit
+noninvasive$se_val <- predictions$se.fit
+
+# 2. Plot with manual error ribbon
+ggplot(data = noninvasive, aes(x = adm)) +
+  # Draw the error ribbon FIRST so it sits behind your points and line
+  geom_ribbon(aes(ymin = predicted_y - 1.96 * se_val, ymax = predicted_y + 1.96 * se_val), 
+              fill = "grey80", alpha = 0.5) + # 1.96 multiplier gives the 95% Confidence Interval
+  geom_point(aes(y = tasty), color = "green", size = 3) +
+  geom_line(aes(y = predicted_y), color = "darkolivegreen", linewidth = 1) + 
+  labs(
+    title = "Preference by Alkaloid Content for Non-Invasives",
+    x = "Alkaloid Content",
+    y = "Rheumaptera Preference"
+  ) +
+  theme_classic()+
+  theme(
+    plot.title = element_text(hjust = 0.5),   
+    axis.title.x = element_text(hjust = 0.5), 
+    axis.title.y = element_text(hjust = 0.5)  
+  )
+
+
+
+#Graph alkaloid content
+allTog %>%
+  arrange(adm)%>%
+  ggplot(aes(x = reorder(Species, adm), y = adm, color = invasive)) + geom_point(cex=5)+ labs(
+              title = "Alkaloid Content by Species",
+              x = "Species",
+              y = "Alkaloid Content")+
+  scale_color_manual(values = c("Invasive" = "darkorchid", 
+                                "Non-Invasive Exotic" = "gold1", 
+                                "Native" = "blue"))+
+  theme(
+    plot.title = element_text(hjust = 0.5),  # Centers the main title
+    axis.title.x = element_text(hjust = 0.5), # Centers the X-axis label
+    axis.title.y = element_text(hjust = 0.5)  # Centers the Y-Axis label
+  )+coord_flip()
+
+
+#Graph Preferences
+allTog %>%
+  arrange(tasty)%>%
+  ggplot(aes(x = reorder(Species, tasty), y = tasty, color = invasive)) + geom_point(cex=5)+ labs(
+    title = "Barberry Preference of Rheumaptera",
+    x = "Species",
+    y = "Preference")+
+  scale_color_manual(values = c("Invasive" = "darkorchid", 
+                                "Non-Invasive Exotic" = "gold1", 
+                                "Native" = "blue"))+
+  theme(
+    plot.title = element_text(hjust = 0.5),  # Centers the main title
+    axis.title.x = element_text(hjust = 0.5), # Centers the X-axis label
+    axis.title.y = element_text(hjust = 0.5)  # Centers the Y-Axis label
+  )+coord_flip()

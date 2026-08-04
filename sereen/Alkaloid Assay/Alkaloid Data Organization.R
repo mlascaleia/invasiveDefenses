@@ -71,3 +71,20 @@ boxplot(absorbance_dilution_drymass ~ INV, data = combined_df,
 
 
 ####Now, effect size of cloudiness on the data????
+
+
+ggplot() +
+  geom_point(data = combined_df, aes(x = adm, y = tasty), color = "darkorchid", size = 3) +
+  
+  # Layer 2: Plot the model trend line calculated ONLY from its own subset
+  geom_line(aes(x=adm, y = predicted_y),
+            color = "darkorchid2", linewidth = 1) +  labs(
+              title = "Tastiness by Alkaloid Content for Invasives",
+              x = "Alkaloid Content",
+              y = "Tastiness"
+            )+
+  theme(
+    plot.title = element_text(hjust = 0.5),  # Centers the main title
+    axis.title.x = element_text(hjust = 0.5), # Centers the X-axis label
+    axis.title.y = element_text(hjust = 0.5)  # Centers the Y-Axis label
+  )
