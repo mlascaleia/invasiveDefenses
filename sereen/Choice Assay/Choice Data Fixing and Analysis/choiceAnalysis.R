@@ -2,7 +2,7 @@
 
 # initialize
 rm(list = ls())
-library(dplyr)
+library(tidyverse)
 #library(brms)
 
 # load data
@@ -128,7 +128,8 @@ allTog <- stringdist_left_join(
 allTog <- allTog %>%
   select(Species, adm, 
          tasty = Estimate,
-         invasive = INV)
+         invasive = INV,
+         stdE = Est.Error)
 
 plot(allTog$adm, allTog$tasty)
 summary(lm(tasty ~ poly(adm, 2), data = allTog))
@@ -165,40 +166,8 @@ plot(invasive$adm, invasive$tasty, pch = 16, col = "darkorchid1",
 #Plot the model onto the invasives data points
 lines(invasive$adm, predict(lin_model, newdata = invasive), col = "darkorchid", lwd = 2)
 
-###NEED TO ADD ERROR!!!
-
-#Plot for non-invasives
-#Make a subset for non-invasives data points
-noninvasive <- subset(allTog, invades == "Non-Invasive Exotic")
-
-#Plot the model onto the non-invasives data points
-plot(noninvasive$adm, noninvasive$tasty, pch = 16, col = "green",
-     xlab = "Alkaloid Content", ylab = "Tastiness", main = "Tastiness By Alkaloid Content for Non-Invasives")
-
-#Plot the model onto the invasives data points
-lines(noninvasive$adm, predict(lin_model, newdata = noninvasive), col = "darkolivegreen", lwd = 2)
-
-
-
 library(ggplot2)
 library(dplyr)
-
-##Invasives plot in ggplot
-invasive$predicted_y <- predict(lin_model, newdata = invasive)
-
-ggplot(data=invasive) +
-  geom_point(data = invasive, aes(x = adm, y = tasty), color = "darkorchid", size = 3) +
-    geom_line(aes(x=adm, y = predicted_y),
-    color = "darkorchid2", linewidth = 1) +  labs(
-    title = "Preference by Alkaloid Content for Invasives",
-    x = "Alkaloid Content",
-    y = "Rheumaptera Preference"
-  )+
-  theme(
-  plot.title = element_text(hjust = 0.5),  # Centers the main title
-  axis.title.x = element_text(hjust = 0.5), # Centers the X-axis label
-  axis.title.y = element_text(hjust = 0.5)  # Centers the Y-Axis label
-  )
 
 #Invasive plot with error
 predictions <- predict(lin_model, newdata = invasive, se.fit = TRUE)
@@ -222,33 +191,12 @@ ggplot(data = invasive, aes(x = adm)) +
     plot.title = element_text(hjust = 0.5),   
     axis.title.x = element_text(hjust = 0.5), 
     axis.title.y = element_text(hjust = 0.5)  
-  )
-
-##Non-invasives plot in ggplot
-summary_noninv_data <- noninvasive %>%
-  group_by(Species) %>% 
-  summarize(
-    mean_val = mean(adm),
-    se_val = sd(adm) / sqrt(n()) # Calculating Standard Error
-  )
-
-se_val <- sd(noninvasive$adm) / sqrt(n()) # Calculating Standard Error
+  )+
+  coord_cartesian(xlim = c(-0.02, 0.24), ylim = c(-1.5, 1.75))+
+  scale_y_continuous(breaks = seq(-1.5, 1.75, by = 0.5)) 
 
 
-noninvasive$predicted_y <- predict(lin_model, newdata = noninvasive)
 
-ggplot(data=noninvasive) +
-  geom_point(data = noninvasive, aes(x = adm, y = tasty), color = "green", size = 3) +
-  geom_line(aes(x=adm, y = predicted_y),
-            color = "darkolivegreen", linewidth = 1) +  labs(
-              title = "Preference by Alkaloid Content for Non-Invasives",
-              x = "Alkaloid Content",
-              y = "Rheumaptera Preference")+
-  theme(
-      plot.title = element_text(hjust = 0.5),  # Centers the main title
-      axis.title.x = element_text(hjust = 0.5), # Centers the X-axis label
-      axis.title.y = element_text(hjust = 0.5)  # Centers the Y-Axis label
-    )
 
 ##Non-invasive graph with error
 # 1. Get predictions AND standard errors (se.fit)
@@ -273,7 +221,10 @@ ggplot(data = noninvasive, aes(x = adm)) +
     plot.title = element_text(hjust = 0.5),   
     axis.title.x = element_text(hjust = 0.5), 
     axis.title.y = element_text(hjust = 0.5)  
-  )
+  )+
+  coord_cartesian(xlim = c(-0.02, 0.24), ylim = c(-1.5, 1.75))+
+  scale_y_continuous(breaks = seq(-1.5, 1.75, by = 0.5)) 
+
 
 
 
@@ -287,24 +238,29 @@ allTog %>%
   scale_color_manual(values = c("Invasive" = "darkorchid", 
                                 "Non-Invasive Exotic" = "gold1", 
                                 "Native" = "blue"))+
+  theme_classic()+
   theme(
+    axis.text.y = element_text(face = "italic"),
     plot.title = element_text(hjust = 0.5),  # Centers the main title
-    axis.title.x = element_text(hjust = 0.5), # Centers the X-axis label
-    axis.title.y = element_text(hjust = 0.5)  # Centers the Y-Axis label
   )+coord_flip()
+
+
 
 
 #Graph Preferences
 allTog %>%
   arrange(tasty)%>%
-  ggplot(aes(x = reorder(Species, tasty), y = tasty, color = invasive)) + geom_point(cex=5)+ labs(
+  ggplot(aes(x = reorder(Species, tasty), y = tasty, color = invasive)) + 
+  geom_pointrange(cex=1, aes (ymin = tasty  - 1.96 * stdE, ymax = tasty + 1.96 * stdE))+ labs(
     title = "Barberry Preference of Rheumaptera",
     x = "Species",
     y = "Preference")+
   scale_color_manual(values = c("Invasive" = "darkorchid", 
                                 "Non-Invasive Exotic" = "gold1", 
                                 "Native" = "blue"))+
-  theme(
+  theme_classic()+
+   theme(
+    axis.text.y = element_text(face = "italic"),
     plot.title = element_text(hjust = 0.5),  # Centers the main title
     axis.title.x = element_text(hjust = 0.5), # Centers the X-axis label
     axis.title.y = element_text(hjust = 0.5)  # Centers the Y-Axis label
