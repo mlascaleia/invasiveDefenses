@@ -164,8 +164,18 @@ terpenoids_plot <- create_boxplot(all_data, Terpenoids, "Relative [Terpenoids]")
 grid_4 <- (flavonoids_plot | phenolics_plot) / 
   (tannins_plot | terpenoids_plot)
 
+# Add labels using patchwork's plot_annotation
+grid_4_with_labels <- grid_4 + 
+  plot_annotation(
+    tag_levels = 'A',  # Automatically adds A, B, C, D
+  ) &
+  theme(
+    plot.tag = element_text(size = 18, face = "bold", hjust = 0, vjust = 0),
+    plot.tag.position = c(0.02, 0.95)  # Top-left position
+  )
+
 # Add a common legend with ggtext parsing
-grid_4_with_legend <- grid_4 + 
+grid_4_with_legend <- grid_4_with_labels + 
   plot_layout(guides = 'collect') &
   theme(
     legend.position = 'bottom',

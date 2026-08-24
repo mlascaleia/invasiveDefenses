@@ -57,7 +57,18 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
     ~group,
     nrow = 2
   ) +
-  theme_tufte(18, base_family = "Arial") +
+  geom_text(
+    data = data.frame(
+      group = unique(df.sum$group),  # Your facet variable
+      label = c("A", "B")              # Labels in the order of your facets
+    ),
+    aes(x = -Inf, y = -Inf, label = label),
+    hjust = -1.1,    # Right-align with small offset
+    vjust = -1,    # Top-align with small offset
+    size = 5,       # Text size
+    fontface = "bold",
+    inherit.aes = FALSE) +
+  theme_tufte(16, base_family = "Arial") +
   theme(
     legend.position = "right",
     legend.title = element_blank(),
