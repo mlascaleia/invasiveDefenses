@@ -138,7 +138,7 @@ create_boxplot <- function(data, y_var, y_label) {
     ) +
     xlab(NULL) +  # Remove x-axis label
     ylab(y_label) +
-    theme_tufte(18) +
+    theme_tufte(18, base_family = "Arial") +
     theme(
       legend.position = "none",
       text = element_text(color = "black"),

@@ -57,14 +57,16 @@ ggplot(data = df.sum, aes(x = time, y = meanDamage)) +
     ~group,
     nrow = 2
   ) +
-  theme_tufte(18) +
+  theme_tufte(18, base_family = "Arial") +
   theme(
     legend.position = "right",
     legend.title = element_blank(),
     # Use element_markdown to parse HTML tags
     strip.text = element_markdown(size = 14),
     legend.text = element_markdown(size = 12),
-    strip.background = element_blank()
+    strip.background = element_blank(),
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.background = element_rect(fill = "white", color = NA),
   ) +
   scale_fill_manual(
     values = c(
